@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+
+.admin-container{
+    width:95%;
+    margin:40px auto;
+}
+
+.dashboard-title{
+    text-align:center;
+    margin-bottom:40px;
+}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+}
+
+.card{
+    background:white;
+    border-radius:12px;
+    padding:25px;
+    box-shadow:0 5px 15px rgba(0,0,0,.1);
+    text-align:center;
+}
+
+.card h2{
+    color:#777;
+    margin-bottom:15px;
+}
+
+.card h1{
+    color:#2c7be5;
+    font-size:40px;
+}
+
+.tables{
+    margin-top:50px;
+}
+
+.table-card{
+    background:white;
+    border-radius:12px;
+    padding:20px;
+    margin-bottom:30px;
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th,td{
+    padding:12px;
+    border-bottom:1px solid #ddd;
+    text-align:left;
+}
+
+th{
+    background:#2c7be5;
+    color:white;
+}
+
+</style>
+
+<div class="admin-container">
+
+<h1 class="dashboard-title">RideShare Management Dashboard</h1>
+
+<div class="cards">
+
+<div class="card">
+<h2>Total Users</h2>
+<h1>{{ users }}</h1>
+</div>
+
+<div class="card">
+<h2>Total Trips</h2>
+<h1>{{ trips }}</h1>
+</div>
+
+<div class="card">
+<h2>Total Bookings</h2>
+<h1>{{ bookings }}</h1>
+</div>
+
+<div class="card">
+<h2>Total Reviews</h2>
+<h1>{{ reviews }}</h1>
+</div>
+
+<div class="card">
+<h2>Seats Reserved</h2>
+<h1>{{ total_seats }}</h1>
+</div>
+
+<div class="card">
+<h2>Gross Revenue</h2>
+<h1>${{ gross_revenue }}</h1>
+</div>
+
+<div class="card">
+<h2>Platform Fee</h2>
+<h1>${{ platform_fee }}</h1>
+</div>
+
+<div class="card">
+<h2>Driver Earnings</h2>
+<h1>${{ driver_income }}</h1>
+</div>
+
+</div>
+
+
+<div class="tables">
+
+<div class="table-card">
+
+<h2>Recent Users</h2>
+
+<table>
+
+<tr>
+<th>Username</th>
+<th>Email</th>
+<th>Date Joined</th>
+</tr>
+
+{% for user in recent_users %}
+
+<tr>
+
+<td>{{ user.username }}</td>
+
+<td>{{ user.email }}</td>
+
+<td>{{ user.date_joined }}</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+
+<div class="table-card">
+
+<h2>Recent Trips</h2>
+
+<table>
+
+<tr>
+
+<th>Driver</th>
+
+<th>From</th>
+
+<th>To</th>
+
+<th>Date</th>
+
+<th>Price</th>
+
+</tr>
+
+{% for trip in recent_trips %}
+
+<tr>
+
+<td>{{ trip.driver.username }}</td>
+
+<td>{{ trip.start_location }}</td>
+
+<td>{{ trip.end_location }}</td>
+
+<td>{{ trip.date }}</td>
+
+<td>${{ trip.price_per_seat }}</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+
+<div class="table-card">
+
+<h2>Recent Bookings</h2>
+
+<table>
+
+<tr>
+
+<th>Passenger</th>
+
+<th>Driver</th>
+
+<th>Route</th>
+
+<th>Seats</th>
+
+</tr>
+
+{% for booking in recent_bookings %}
+
+<tr>
+
+<td>{{ booking.passenger.username }}</td>
+
+<td>{{ booking.trip.driver.username }}</td>
+
+<td>{{ booking.trip.start_location }} → {{ booking.trip.end_location }}</td>
+
+<td>{{ booking.seats_booked }}</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+{% endblock %}

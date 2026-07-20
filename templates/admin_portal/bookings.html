@@ -1,0 +1,815 @@
+{% extends "admin_portal/base.html" %}
+
+{% block title %}
+    Bookings | RideShare Command Center
+{% endblock %}
+
+{% block page_title %}
+    Booking Management
+{% endblock %}
+
+{% block extra_css %}
+
+<style>
+    .booking-header {
+        margin-bottom: 24px;
+    }
+
+    .booking-header h1 {
+        margin: 0;
+        color: #0f172a;
+        font-size: 29px;
+    }
+
+    .booking-header p {
+        max-width: 700px;
+        margin: 7px 0 0;
+        color: var(--muted);
+        line-height: 1.6;
+    }
+
+    .summary-grid {
+        display: grid;
+        grid-template-columns:
+            repeat(5, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .summary-card {
+        padding: 20px;
+        border: 1px solid var(--border);
+        border-radius: 17px;
+        background: white;
+        box-shadow:
+            0 8px 26px rgba(15, 23, 42, .05);
+    }
+
+    .summary-label {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .summary-value {
+        margin-top: 13px;
+        color: #0f172a;
+        font-size: 26px;
+        font-weight: 800;
+    }
+
+    .filter-panel {
+        margin-bottom: 24px;
+        padding: 20px;
+        border: 1px solid var(--border);
+        border-radius: 17px;
+        background: white;
+        box-shadow:
+            0 8px 26px rgba(15, 23, 42, .05);
+    }
+
+    .filter-form {
+        display: grid;
+        grid-template-columns:
+            minmax(250px, 1.6fr)
+            minmax(170px, .7fr)
+            minmax(180px, .8fr)
+            auto;
+        gap: 13px;
+        align-items: end;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 7px;
+        color: #334155;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .form-control {
+        width: 100%;
+        height: 44px;
+        padding: 0 13px;
+        border: 1px solid #cbd5e1;
+        border-radius: 10px;
+        background: white;
+        color: #0f172a;
+        font: inherit;
+        font-size: 13px;
+        outline: none;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary);
+        box-shadow:
+            0 0 0 3px rgba(37, 99, 235, .12);
+    }
+
+    .filter-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .button {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 15px;
+        border-radius: 10px;
+        font-size: 12px;
+        font-weight: 800;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .button-primary {
+        border: 0;
+        background: var(--primary);
+        color: white;
+    }
+
+    .button-secondary {
+        border: 1px solid var(--border);
+        background: white;
+        color: #475569;
+    }
+
+    .panel {
+        overflow: hidden;
+        border: 1px solid var(--border);
+        border-radius: 17px;
+        background: white;
+        box-shadow:
+            0 8px 26px rgba(15, 23, 42, .05);
+    }
+
+    .panel-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 20px 22px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .panel-heading h3 {
+        margin: 0;
+        color: #0f172a;
+        font-size: 17px;
+    }
+
+    .panel-heading p {
+        margin: 5px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+    }
+
+    .result-count {
+        padding: 7px 11px;
+        border-radius: 999px;
+        background: #eff6ff;
+        color: #1d4ed8;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th,
+    td {
+        padding: 16px 18px;
+        border-bottom: 1px solid var(--border);
+        text-align: left;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+    th {
+        background: #f8fafc;
+        color: var(--muted);
+        font-size: 10px;
+        letter-spacing: .7px;
+        text-transform: uppercase;
+    }
+
+    td {
+        color: #334155;
+        font-size: 12px;
+    }
+
+    tbody tr:hover {
+        background: #f8fafc;
+    }
+
+    .person {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .avatar {
+        width: 38px;
+        height: 38px;
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+        border-radius: 12px;
+        background: #dbeafe;
+        color: #1d4ed8;
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+
+    .person strong {
+        display: block;
+        color: #0f172a;
+    }
+
+    .person span {
+        display: block;
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 10px;
+    }
+
+    .route strong {
+        display: block;
+        color: #0f172a;
+    }
+
+    .route span {
+        display: block;
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 10px;
+    }
+
+    .money {
+        color: #0f172a;
+        font-weight: 800;
+    }
+
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 7px 10px;
+        border-radius: 999px;
+        font-size: 10px;
+        font-weight: 800;
+    }
+
+    .badge-upcoming {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    .badge-today {
+        background: #fef3c7;
+        color: #b45309;
+    }
+
+    .badge-completed {
+        background: #e2e8f0;
+        color: #475569;
+    }
+
+    .badge-unscheduled {
+        background: #f3e8ff;
+        color: #7e22ce;
+    }
+
+    .action-button {
+        min-height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 9px;
+        background: white;
+        color: #334155;
+        font-size: 11px;
+        font-weight: 800;
+        text-decoration: none;
+    }
+
+    .action-button:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .pagination {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        padding: 18px 22px;
+        border-top: 1px solid var(--border);
+    }
+
+    .pagination-links {
+        display: flex;
+        gap: 7px;
+        flex-wrap: wrap;
+    }
+
+    .page-link {
+        min-width: 36px;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 10px;
+        border: 1px solid var(--border);
+        border-radius: 9px;
+        background: white;
+        color: #475569;
+        font-size: 11px;
+        font-weight: 800;
+        text-decoration: none;
+    }
+
+    .page-link.active {
+        border-color: var(--primary);
+        background: var(--primary);
+        color: white;
+    }
+
+    .empty-state {
+        padding: 55px 20px;
+        text-align: center;
+        color: var(--muted);
+    }
+
+    @media (max-width: 1200px) {
+        .summary-grid {
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 900px) {
+        .filter-form {
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+        }
+
+        .filter-actions {
+            grid-column: span 2;
+        }
+    }
+
+    @media (max-width: 650px) {
+        .summary-grid,
+        .filter-form {
+            grid-template-columns: 1fr;
+        }
+
+        .filter-actions {
+            grid-column: auto;
+        }
+
+        .pagination {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+    }
+</style>
+
+{% endblock %}
+
+{% block portal_content %}
+
+<div class="booking-header">
+    <h1>Booking Management</h1>
+
+    <p>
+        Monitor passenger reservations, booked seats,
+        trip activity and booking revenue across the platform.
+    </p>
+</div>
+
+
+<section class="summary-grid">
+
+    <article class="summary-card">
+        <div class="summary-label">Total bookings</div>
+        <div class="summary-value">{{ total_bookings }}</div>
+    </article>
+
+    <article class="summary-card">
+        <div class="summary-label">Upcoming bookings</div>
+        <div class="summary-value">{{ upcoming_bookings }}</div>
+    </article>
+
+    <article class="summary-card">
+        <div class="summary-label">Completed bookings</div>
+        <div class="summary-value">{{ completed_bookings }}</div>
+    </article>
+
+    <article class="summary-card">
+        <div class="summary-label">Seats reserved</div>
+        <div class="summary-value">{{ total_seats }}</div>
+    </article>
+
+    <article class="summary-card">
+        <div class="summary-label">Booking revenue</div>
+        <div class="summary-value">
+            ${{ total_revenue|floatformat:2 }}
+        </div>
+    </article>
+
+</section>
+
+
+<section class="filter-panel">
+
+    <form method="get" class="filter-form">
+
+        <div class="form-group">
+            <label for="booking-search">
+                Search passenger, driver or route
+            </label>
+
+            <input
+                id="booking-search"
+                class="form-control"
+                type="search"
+                name="q"
+                value="{{ search_query }}"
+                placeholder="Passenger, driver, origin or destination"
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="status-filter">
+                Trip status
+            </label>
+
+            <select
+                id="status-filter"
+                class="form-control"
+                name="status"
+            >
+                <option value="all"
+                    {% if status_filter == "all" %}selected{% endif %}
+                >
+                    All statuses
+                </option>
+
+                <option value="upcoming"
+                    {% if status_filter == "upcoming" %}selected{% endif %}
+                >
+                    Upcoming
+                </option>
+
+                <option value="today"
+                    {% if status_filter == "today" %}selected{% endif %}
+                >
+                    Today
+                </option>
+
+                <option value="completed"
+                    {% if status_filter == "completed" %}selected{% endif %}
+                >
+                    Completed
+                </option>
+
+                <option value="unscheduled"
+                    {% if status_filter == "unscheduled" %}selected{% endif %}
+                >
+                    Date not set
+                </option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="sort-filter">
+                Sort by
+            </label>
+
+            <select
+                id="sort-filter"
+                class="form-control"
+                name="sort"
+            >
+                <option value="newest"
+                    {% if sort_option == "newest" %}selected{% endif %}
+                >
+                    Newest booking
+                </option>
+
+                <option value="oldest"
+                    {% if sort_option == "oldest" %}selected{% endif %}
+                >
+                    Oldest booking
+                </option>
+
+                <option value="highest_value"
+                    {% if sort_option == "highest_value" %}selected{% endif %}
+                >
+                    Highest value
+                </option>
+
+                <option value="most_seats"
+                    {% if sort_option == "most_seats" %}selected{% endif %}
+                >
+                    Most seats
+                </option>
+
+                <option value="departure"
+                    {% if sort_option == "departure" %}selected{% endif %}
+                >
+                    Departure date
+                </option>
+            </select>
+        </div>
+
+        <div class="filter-actions">
+            <button
+                type="submit"
+                class="button button-primary"
+            >
+                Apply
+            </button>
+
+            <a
+                class="button button-secondary"
+                href="{% url 'admin_portal:bookings' %}"
+            >
+                Reset
+            </a>
+        </div>
+
+    </form>
+
+</section>
+
+
+<section class="panel">
+
+    <div class="panel-heading">
+        <div>
+            <h3>Platform bookings</h3>
+
+            <p>
+                Passenger reservations across all rides
+            </p>
+        </div>
+
+        <span class="result-count">
+            {{ bookings_page.paginator.count }}
+            result{{ bookings_page.paginator.count|pluralize }}
+        </span>
+    </div>
+
+
+    {% if bookings_page.object_list %}
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Passenger</th>
+                        <th>Route</th>
+                        <th>Driver</th>
+                        <th>Departure</th>
+                        <th>Seats</th>
+                        <th>Value</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for booking in bookings_page %}
+
+                        <tr>
+
+                            <td>
+                                <div class="person">
+                                    <span class="avatar">
+                                        {{ booking.passenger.username|slice:":1" }}
+                                    </span>
+
+                                    <span>
+                                        <strong>
+                                            {% if booking.passenger.get_full_name %}
+                                                {{ booking.passenger.get_full_name }}
+                                            {% else %}
+                                                {{ booking.passenger.username }}
+                                            {% endif %}
+                                        </strong>
+
+                                        <span>
+                                            {{ booking.passenger.email|default:"No email" }}
+                                        </span>
+                                    </span>
+                                </div>
+                            </td>
+
+
+                            <td>
+                                <div class="route">
+                                    <strong>
+                                        {{ booking.trip.start_location }}
+                                        →
+                                        {{ booking.trip.end_location }}
+                                    </strong>
+
+                                    <span>
+                                        Trip #{{ booking.trip.pk }}
+                                    </span>
+                                </div>
+                            </td>
+
+
+                            <td>
+                                <div class="person">
+                                    <span class="avatar">
+                                        {{ booking.trip.driver.username|slice:":1" }}
+                                    </span>
+
+                                    <span>
+                                        <strong>
+                                            {{ booking.trip.driver.username }}
+                                        </strong>
+
+                                        <span>
+                                            Driver
+                                        </span>
+                                    </span>
+                                </div>
+                            </td>
+
+
+                            <td>
+                                {% if booking.trip.date %}
+                                    <strong>
+                                        {{ booking.trip.date|date:"M d, Y" }}
+                                    </strong>
+
+                                    <div style="
+                                        margin-top: 4px;
+                                        color: var(--muted);
+                                        font-size: 10px;
+                                    ">
+                                        {% if booking.trip.time %}
+                                            {{ booking.trip.time|time:"g:i A" }}
+                                        {% else %}
+                                            Time not set
+                                        {% endif %}
+                                    </div>
+                                {% else %}
+                                    Date not set
+                                {% endif %}
+                            </td>
+
+
+                            <td>
+                                {{ booking.seats_booked }}
+                            </td>
+
+
+                            <td class="money">
+                                ${{ booking.booking_value|floatformat:2 }}
+                            </td>
+
+
+                            <td>
+                                {% if booking.operation_status == "upcoming" %}
+
+                                    <span class="badge badge-upcoming">
+                                        ● Upcoming
+                                    </span>
+
+                                {% elif booking.operation_status == "today" %}
+
+                                    <span class="badge badge-today">
+                                        ● Today
+                                    </span>
+
+                                {% elif booking.operation_status == "completed" %}
+
+                                    <span class="badge badge-completed">
+                                        ● Completed
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge badge-unscheduled">
+                                        ● Date not set
+                                    </span>
+
+                                {% endif %}
+                            </td>
+
+
+                            <td>
+                                <a
+                                    class="action-button"
+                                    href="{% url 'admin_portal:booking_detail' booking.pk %}"
+                                >
+                                    View Details
+                                </a>
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% if bookings_page.paginator.num_pages > 1 %}
+
+            <div class="pagination">
+
+                <div>
+                    Showing
+                    {{ bookings_page.start_index }}
+                    to
+                    {{ bookings_page.end_index }}
+                    of
+                    {{ bookings_page.paginator.count }}
+                    bookings
+                </div>
+
+                <div class="pagination-links">
+
+                    {% if bookings_page.has_previous %}
+
+                        <a
+                            class="page-link"
+                            href="?q={{ search_query|urlencode }}&status={{ status_filter }}&sort={{ sort_option }}&page={{ bookings_page.previous_page_number }}"
+                        >
+                            Previous
+                        </a>
+
+                    {% endif %}
+
+                    {% for page_number in bookings_page.paginator.page_range %}
+
+                        {% if page_number == bookings_page.number %}
+
+                            <span class="page-link active">
+                                {{ page_number }}
+                            </span>
+
+                        {% elif page_number >= bookings_page.number|add:"-2" and page_number <= bookings_page.number|add:"2" %}
+
+                            <a
+                                class="page-link"
+                                href="?q={{ search_query|urlencode }}&status={{ status_filter }}&sort={{ sort_option }}&page={{ page_number }}"
+                            >
+                                {{ page_number }}
+                            </a>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+                    {% if bookings_page.has_next %}
+
+                        <a
+                            class="page-link"
+                            href="?q={{ search_query|urlencode }}&status={{ status_filter }}&sort={{ sort_option }}&page={{ bookings_page.next_page_number }}"
+                        >
+                            Next
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+    {% else %}
+
+        <div class="empty-state">
+            No bookings match the current search and filters.
+        </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

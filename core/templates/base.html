@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>{% block title %}RideShare{% endblock %}</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <style>
+        :root {
+            --background: #efede7;
+            --surface: #ffffff;
+            --surface-soft: #f8f7f3;
+            --dark: #203d31;
+            --dark-hover: #172e25;
+            --accent: #adf33f;
+            --accent-hover: #9de62f;
+            --text: #171817;
+            --muted: #626760;
+            --border: #deded8;
+            --shadow: 0 18px 45px rgba(30, 48, 39, 0.10);
+            --radius-large: 32px;
+            --radius-medium: 22px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+            font-family: "Inter", sans-serif;
+            background: var(--background);
+            color: var(--text);
+        }
+
+        a {
+            color: inherit;
+        }
+
+        img {
+            display: block;
+            max-width: 100%;
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            font: inherit;
+        }
+
+        /* Shared page container */
+
+        .page-container {
+            width: min(1180px, calc(100% - 40px));
+            margin: 0 auto;
+        }
+
+        /* Navbar */
+
+        .site-header {
+            position: relative;
+            z-index: 1000;
+            padding: 22px 0 0;
+        }
+
+        .navbar {
+            width: min(1180px, calc(100% - 40px));
+            min-height: 76px;
+            margin: 0 auto;
+            padding: 12px 18px 12px 22px;
+
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: 24px;
+
+            background: rgba(255, 255, 255, 0.90);
+            border: 1px solid rgba(255, 255, 255, 0.80);
+            border-radius: 999px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(16px);
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            justify-self: start;
+            gap: 11px;
+
+            color: var(--dark);
+            text-decoration: none;
+            font-size: 1.05rem;
+            font-weight: 800;
+        }
+
+        .logo-circle {
+            width: 38px;
+            height: 38px;
+            flex-shrink: 0;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.03);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            position: relative;
+            color: #323632;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a:not(.btn)::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -7px;
+            height: 2px;
+            border-radius: 10px;
+            background: var(--dark);
+            transform: scaleX(0);
+            transition: transform 0.2s ease;
+        }
+
+        .nav-links a:not(.btn):hover {
+            color: var(--dark);
+        }
+
+        .nav-links a:not(.btn):hover::after {
+            transform: scaleX(1);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            justify-self: end;
+            gap: 12px;
+        }
+
+        /* Buttons */
+
+        .btn {
+            width: auto;
+            min-height: 46px;
+            padding: 12px 20px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+
+            border: 1px solid transparent;
+            border-radius: 999px;
+
+            background: var(--dark);
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 700;
+            line-height: 1;
+            cursor: pointer;
+
+            transition:
+                transform 0.2s ease,
+                background 0.2s ease,
+                border-color 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            background: var(--dark-hover);
+            box-shadow: 0 10px 24px rgba(32, 61, 49, 0.18);
+        }
+
+        .btn-dark {
+            background: var(--dark);
+            color: #ffffff;
+        }
+
+        .btn-accent {
+            background: var(--accent);
+            color: var(--dark);
+        }
+
+        .btn-accent:hover {
+            background: var(--accent-hover);
+        }
+
+        .btn-light {
+            background: #ffffff;
+            color: var(--dark);
+            border-color: var(--border);
+        }
+
+        .btn-light:hover {
+            background: var(--surface-soft);
+            border-color: #cfcfc8;
+        }
+
+        .btn-secondary {
+            background: #e3e3dd;
+            color: var(--text);
+        }
+
+        .btn-danger {
+            background: #df4b4b;
+            color: #ffffff;
+        }
+
+        .btn-success {
+            background: #2f9d67;
+            color: #ffffff;
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        /* User dropdown */
+
+        .user-menu {
+            position: relative;
+        }
+
+        .user-trigger {
+            min-height: 46px;
+            padding: 6px 13px 6px 7px;
+
+            display: flex;
+            align-items: center;
+            gap: 9px;
+
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            background: var(--surface-soft);
+            color: var(--dark);
+
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .avatar {
+            width: 34px;
+            height: 34px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 50%;
+            background: var(--dark);
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 12px);
+            right: 0;
+
+            width: 200px;
+            padding: 8px;
+
+            display: none;
+            flex-direction: column;
+            gap: 2px;
+
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .dropdown-menu.is-open {
+            display: flex;
+        }
+
+        .dropdown-menu a {
+            padding: 11px 12px;
+            border-radius: 10px;
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .dropdown-menu a:hover {
+            background: var(--surface-soft);
+        }
+
+        .dropdown-menu .logout {
+            color: #d13f3f;
+        }
+
+        /* General sections used by other templates */
+
+        .section,
+        .content-section {
+            width: min(1100px, calc(100% - 40px));
+            margin: 0 auto;
+            padding: 60px 0;
+        }
+
+        .form-card,
+        .booking-card,
+        .trip-card,
+        .stats-card {
+            padding: 25px;
+            background: var(--surface);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            border-radius: var(--radius-medium);
+            box-shadow: 0 8px 24px rgba(25, 37, 31, 0.06);
+        }
+
+        .auth-wrap {
+            min-height: calc(100vh - 120px);
+            padding: 50px 20px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 13px 14px;
+            margin: 0;
+
+            border: 1px solid #d8d8d2;
+            border-radius: 12px;
+            outline: none;
+            background: #ffffff;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--dark);
+            box-shadow: 0 0 0 3px rgba(32, 61, 49, 0.10);
+        }
+
+        .actions-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .meta-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .chip {
+            padding: 7px 12px;
+            border-radius: 999px;
+            background: #e6e5df;
+            font-size: 0.78rem;
+        }
+
+        .empty-state {
+            padding: 34px;
+            border-radius: var(--radius-medium);
+            background: var(--surface);
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .stats-box {
+            padding: 20px;
+            border-radius: 15px;
+            background: #ffffff;
+            text-align: center;
+        }
+
+        /* Authentication pages */
+
+        .auth-page {
+            min-height: 100vh;
+            display: flex;
+        }
+
+        .auth-left,
+        .auth-right {
+            width: 50%;
+        }
+
+        .auth-left {
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .auth-right img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Profile */
+
+        .profile-card {
+            max-width: 600px;
+            margin: auto;
+            overflow: hidden;
+            background: #ffffff;
+            border-radius: 16px;
+        }
+
+        .profile-top {
+            padding: 24px;
+            background: var(--dark);
+            color: #ffffff;
+        }
+
+        .profile-stats {
+            padding: 16px;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .info-box {
+            margin: 10px;
+            padding: 12px;
+            border-radius: 10px;
+            background: #f5f5f2;
+        }
+
+        /* Mobile navbar */
+
+        .mobile-menu-button {
+            display: none;
+            width: 44px;
+            height: 44px;
+            padding: 0;
+
+            align-items: center;
+            justify-content: center;
+
+            border: 0;
+            border-radius: 50%;
+            background: var(--dark);
+            color: #ffffff;
+            font-size: 1.25rem;
+            cursor: pointer;
+        }
+
+        @media (max-width: 850px) {
+            .site-header {
+                padding-top: 14px;
+            }
+
+            .navbar {
+                width: min(100% - 24px, 1180px);
+                min-height: 68px;
+                grid-template-columns: 1fr auto;
+                gap: 12px;
+                padding: 10px 12px 10px 16px;
+                border-radius: 24px;
+            }
+
+            .mobile-menu-button {
+                display: inline-flex;
+            }
+
+            .nav-links,
+            .nav-right {
+                grid-column: 1 / -1;
+                width: 100%;
+                display: none;
+            }
+
+            .navbar.menu-open .nav-links,
+            .navbar.menu-open .nav-right {
+                display: flex;
+            }
+
+            .navbar.menu-open .nav-links {
+                padding-top: 14px;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 6px;
+                border-top: 1px solid var(--border);
+            }
+
+            .navbar.menu-open .nav-links a {
+                padding: 11px 12px;
+                border-radius: 10px;
+                text-align: center;
+            }
+
+            .navbar.menu-open .nav-links a:hover {
+                background: var(--surface-soft);
+            }
+
+            .navbar.menu-open .nav-links a::after {
+                display: none;
+            }
+
+            .navbar.menu-open .nav-right {
+                padding-bottom: 5px;
+                justify-content: stretch;
+            }
+
+            .navbar.menu-open .nav-right > *,
+            .navbar.menu-open .nav-right .btn,
+            .navbar.menu-open .user-menu,
+            .navbar.menu-open .user-trigger {
+                width: 100%;
+            }
+
+            .dropdown-menu {
+                position: static;
+                width: 100%;
+                margin-top: 8px;
+                box-shadow: none;
+            }
+
+            .form-grid,
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .auth-page {
+                display: block;
+            }
+
+            .auth-left,
+            .auth-right {
+                width: 100%;
+            }
+
+            .auth-left {
+                padding: 40px 24px;
+            }
+
+            .auth-right {
+                display: none;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .page-container,
+            .section,
+            .content-section {
+                width: min(100% - 24px, 1100px);
+            }
+
+            .logo-circle {
+                width: 34px;
+                height: 34px;
+            }
+
+            .logo {
+                font-size: 0.98rem;
+            }
+
+            .actions-row {
+                flex-direction: column;
+            }
+
+            .actions-row .btn {
+                width: 100%;
+            }
+        }
+
+        {% block extra_css %}{% endblock %}
+    </style>
+</head>
+
+<body>
+
+<header class="site-header">
+    <nav class="navbar" id="mainNavbar">
+        <a href="{% url 'home' %}" class="logo" aria-label="RideShare home">
+            <span class="logo-circle"></span>
+            <span>RideShare</span>
+        </a>
+
+        <button
+            class="mobile-menu-button"
+            id="mobileMenuButton"
+            type="button"
+            aria-label="Open navigation menu"
+            aria-expanded="false"
+        >
+            ☰
+        </button>
+
+        <div class="nav-links">
+            <a href="{% url 'find_rides' %}">Find a Ride</a>
+
+            {% if user.is_authenticated %}
+                <a href="{% url 'dashboard' %}">Dashboard</a>
+                <a href="{% url 'create_trip' %}">Offer a Ride</a>
+            {% endif %}
+        </div>
+
+        <div class="nav-right">
+            {% if user.is_authenticated %}
+                <div class="user-menu">
+                    <button
+                        class="user-trigger"
+                        id="userMenuTrigger"
+                        type="button"
+                        aria-expanded="false"
+                    >
+                        <span class="avatar">
+                            {{ user.username|slice:":1"|upper }}
+                        </span>
+
+                        <span>{{ user.username }}</span>
+                        <span aria-hidden="true">⌄</span>
+                    </button>
+
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <a href="{% url 'my_bookings' %}">My Bookings</a>
+
+                        {# Change this when your profile URL is ready #}
+                        <a href="{% url 'profile' %}">
+                            My Profile
+                        </a>
+
+                        <a href="{% url 'logout' %}" class="logout">
+                            Logout
+                        </a>
+                    </div>
+                </div>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn btn-light">
+                    Log in
+                </a>
+
+                <a href="{% url 'signup' %}" class="btn btn-accent">
+                    Sign up
+                </a>
+            {% endif %}
+        </div>
+    </nav>
+</header>
+
+<main>
+    {% block content %}{% endblock %}
+</main>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const navbar = document.getElementById("mainNavbar");
+        const mobileMenuButton = document.getElementById("mobileMenuButton");
+        const userMenuTrigger = document.getElementById("userMenuTrigger");
+        const dropdownMenu = document.getElementById("dropdownMenu");
+
+        if (mobileMenuButton && navbar) {
+            mobileMenuButton.addEventListener("click", function () {
+                const isOpen = navbar.classList.toggle("menu-open");
+
+                mobileMenuButton.setAttribute(
+                    "aria-expanded",
+                    isOpen ? "true" : "false"
+                );
+
+                mobileMenuButton.textContent = isOpen ? "✕" : "☰";
+            });
+        }
+
+        if (userMenuTrigger && dropdownMenu) {
+            userMenuTrigger.addEventListener("click", function (event) {
+                event.stopPropagation();
+
+                const isOpen = dropdownMenu.classList.toggle("is-open");
+
+                userMenuTrigger.setAttribute(
+                    "aria-expanded",
+                    isOpen ? "true" : "false"
+                );
+            });
+
+            document.addEventListener("click", function (event) {
+                const clickedInsideMenu =
+                    dropdownMenu.contains(event.target) ||
+                    userMenuTrigger.contains(event.target);
+
+                if (!clickedInsideMenu) {
+                    dropdownMenu.classList.remove("is-open");
+                    userMenuTrigger.setAttribute("aria-expanded", "false");
+                }
+            });
+        }
+    });
+</script>
+
+{% block extra_js %}{% endblock %}
+
+</body>
+</html>

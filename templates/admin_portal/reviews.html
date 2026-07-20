@@ -1,0 +1,876 @@
+{% extends "admin_portal/base.html" %}
+
+{% block title %}
+    Reviews | RideShare Command Center
+{% endblock %}
+
+{% block page_title %}
+    Review Management
+{% endblock %}
+
+
+{% block extra_css %}
+
+<style>
+    .reviews-header {
+        margin-bottom: 24px;
+    }
+
+    .reviews-header h1 {
+        margin: 0;
+        color: #0f172a;
+        font-size: 29px;
+    }
+
+    .reviews-header p {
+        max-width: 720px;
+        margin: 7px 0 0;
+        color: var(--muted);
+        line-height: 1.6;
+    }
+
+    .summary-grid {
+        display: grid;
+        grid-template-columns:
+            repeat(5, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .summary-card {
+        padding: 20px;
+        border: 1px solid var(--border);
+        border-radius: 17px;
+        background: white;
+        box-shadow:
+            0 8px 26px rgba(15, 23, 42, .05);
+    }
+
+    .summary-label {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .summary-value {
+        margin-top: 12px;
+        color: #0f172a;
+        font-size: 26px;
+        font-weight: 800;
+    }
+
+    .rating-value {
+        color: #d97706;
+    }
+
+    .filter-panel {
+        margin-bottom: 24px;
+        padding: 20px;
+        border: 1px solid var(--border);
+        border-radius: 17px;
+        background: white;
+        box-shadow:
+            0 8px 26px rgba(15, 23, 42, .05);
+    }
+
+    .filter-form {
+        display: grid;
+        grid-template-columns:
+            minmax(260px, 1.6fr)
+            minmax(170px, .7fr)
+            minmax(185px, .8fr)
+            auto;
+        gap: 13px;
+        align-items: end;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 7px;
+        color: #334155;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .form-control {
+        width: 100%;
+        height: 44px;
+        padding: 0 13px;
+        border: 1px solid #cbd5e1;
+        border-radius: 10px;
+        background: white;
+        color: #0f172a;
+        font: inherit;
+        font-size: 13px;
+        outline: none;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary);
+        box-shadow:
+            0 0 0 3px rgba(37, 99, 235, .12);
+    }
+
+    .filter-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .button {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 15px;
+        border-radius: 10px;
+        font-size: 12px;
+        font-weight: 800;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .button-primary {
+        border: 0;
+        background: var(--primary);
+        color: white;
+    }
+
+    .button-secondary {
+        border: 1px solid var(--border);
+        background: white;
+        color: #475569;
+    }
+
+    .panel {
+        overflow: hidden;
+        border: 1px solid var(--border);
+        border-radius: 17px;
+        background: white;
+        box-shadow:
+            0 8px 26px rgba(15, 23, 42, .05);
+    }
+
+    .panel-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 20px 22px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .panel-heading h3 {
+        margin: 0;
+        color: #0f172a;
+        font-size: 17px;
+    }
+
+    .panel-heading p {
+        margin: 5px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+    }
+
+    .result-count {
+        padding: 7px 11px;
+        border-radius: 999px;
+        background: #eff6ff;
+        color: #1d4ed8;
+        font-size: 11px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th,
+    td {
+        padding: 16px 18px;
+        border-bottom: 1px solid var(--border);
+        text-align: left;
+        vertical-align: middle;
+    }
+
+    th {
+        background: #f8fafc;
+        color: var(--muted);
+        font-size: 10px;
+        letter-spacing: .7px;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    td {
+        color: #334155;
+        font-size: 12px;
+    }
+
+    tbody tr:hover {
+        background: #f8fafc;
+    }
+
+    .person {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 170px;
+    }
+
+    .avatar {
+        width: 38px;
+        height: 38px;
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+        border-radius: 12px;
+        background: #dbeafe;
+        color: #1d4ed8;
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+
+    .person strong {
+        display: block;
+        color: #0f172a;
+    }
+
+    .person span {
+        display: block;
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 10px;
+    }
+
+    .route {
+        min-width: 180px;
+    }
+
+    .route strong {
+        display: block;
+        color: #0f172a;
+    }
+
+    .route span {
+        display: block;
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 10px;
+    }
+
+    .stars {
+        color: #f59e0b;
+        font-size: 17px;
+        letter-spacing: 1px;
+        white-space: nowrap;
+    }
+
+    .rating-number {
+        margin-top: 5px;
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    .comment {
+        max-width: 330px;
+        min-width: 220px;
+        color: #475569;
+        line-height: 1.55;
+    }
+
+    .action-button {
+        min-height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 9px;
+        background: white;
+        color: #334155;
+        font-size: 11px;
+        font-weight: 800;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    .action-button:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .pagination {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        padding: 18px 22px;
+        border-top: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 12px;
+    }
+
+    .pagination-links {
+        display: flex;
+        gap: 7px;
+        flex-wrap: wrap;
+    }
+
+    .page-link {
+        min-width: 36px;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 10px;
+        border: 1px solid var(--border);
+        border-radius: 9px;
+        background: white;
+        color: #475569;
+        font-size: 11px;
+        font-weight: 800;
+        text-decoration: none;
+    }
+
+    .page-link.active {
+        border-color: var(--primary);
+        background: var(--primary);
+        color: white;
+    }
+
+    .empty-state {
+        padding: 55px 20px;
+        text-align: center;
+        color: var(--muted);
+    }
+
+    @media (max-width: 1200px) {
+        .summary-grid {
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 900px) {
+        .filter-form {
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+        }
+
+        .filter-actions {
+            grid-column: span 2;
+        }
+    }
+
+    @media (max-width: 650px) {
+        .summary-grid,
+        .filter-form {
+            grid-template-columns: 1fr;
+        }
+
+        .filter-actions {
+            grid-column: auto;
+        }
+
+        .pagination,
+        .panel-heading {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+    }
+</style>
+
+{% endblock %}
+
+
+{% block portal_content %}
+
+<div class="reviews-header">
+    <h1>Review Management</h1>
+
+    <p>
+        Monitor rider feedback, driver ratings and customer
+        experiences across all trips on the platform.
+    </p>
+</div>
+
+
+<section class="summary-grid">
+
+    <article class="summary-card">
+        <div class="summary-label">Total reviews</div>
+
+        <div class="summary-value">
+            {{ total_reviews }}
+        </div>
+    </article>
+
+    <article class="summary-card">
+        <div class="summary-label">Average rating</div>
+
+        <div class="summary-value rating-value">
+            {{ average_rating|floatformat:1 }} ★
+        </div>
+    </article>
+
+    <article class="summary-card">
+        <div class="summary-label">Five-star reviews</div>
+
+        <div class="summary-value">
+            {{ five_star_reviews }}
+        </div>
+    </article>
+
+    <article class="summary-card">
+        <div class="summary-label">One-star reviews</div>
+
+        <div class="summary-value">
+            {{ one_star_reviews }}
+        </div>
+    </article>
+
+    <article class="summary-card">
+        <div class="summary-label">Reviewed drivers</div>
+
+        <div class="summary-value">
+            {{ reviewed_drivers }}
+        </div>
+    </article>
+
+</section>
+
+
+<section class="filter-panel">
+
+    <form method="get" class="filter-form">
+
+        <div class="form-group">
+            <label for="review-search">
+                Search reviews
+            </label>
+
+            <input
+                id="review-search"
+                class="form-control"
+                type="search"
+                name="q"
+                value="{{ search_query }}"
+                placeholder="Reviewer, driver, route or comment"
+            >
+        </div>
+
+
+        <div class="form-group">
+            <label for="rating-filter">
+                Rating
+            </label>
+
+            <select
+                id="rating-filter"
+                class="form-control"
+                name="rating"
+            >
+                <option
+                    value="all"
+                    {% if rating_filter == "all" %}
+                        selected
+                    {% endif %}
+                >
+                    All ratings
+                </option>
+
+                <option
+                    value="5"
+                    {% if rating_filter == "5" %}
+                        selected
+                    {% endif %}
+                >
+                    5 stars
+                </option>
+
+                <option
+                    value="4"
+                    {% if rating_filter == "4" %}
+                        selected
+                    {% endif %}
+                >
+                    4 stars
+                </option>
+
+                <option
+                    value="3"
+                    {% if rating_filter == "3" %}
+                        selected
+                    {% endif %}
+                >
+                    3 stars
+                </option>
+
+                <option
+                    value="2"
+                    {% if rating_filter == "2" %}
+                        selected
+                    {% endif %}
+                >
+                    2 stars
+                </option>
+
+                <option
+                    value="1"
+                    {% if rating_filter == "1" %}
+                        selected
+                    {% endif %}
+                >
+                    1 star
+                </option>
+            </select>
+        </div>
+
+
+        <div class="form-group">
+            <label for="sort-filter">
+                Sort by
+            </label>
+
+            <select
+                id="sort-filter"
+                class="form-control"
+                name="sort"
+            >
+                <option
+                    value="newest"
+                    {% if sort_option == "newest" %}
+                        selected
+                    {% endif %}
+                >
+                    Newest review
+                </option>
+
+                <option
+                    value="oldest"
+                    {% if sort_option == "oldest" %}
+                        selected
+                    {% endif %}
+                >
+                    Oldest review
+                </option>
+
+                <option
+                    value="highest"
+                    {% if sort_option == "highest" %}
+                        selected
+                    {% endif %}
+                >
+                    Highest rating
+                </option>
+
+                <option
+                    value="lowest"
+                    {% if sort_option == "lowest" %}
+                        selected
+                    {% endif %}
+                >
+                    Lowest rating
+                </option>
+
+                <option
+                    value="reviewer"
+                    {% if sort_option == "reviewer" %}
+                        selected
+                    {% endif %}
+                >
+                    Reviewer name
+                </option>
+
+                <option
+                    value="driver"
+                    {% if sort_option == "driver" %}
+                        selected
+                    {% endif %}
+                >
+                    Driver name
+                </option>
+            </select>
+        </div>
+
+
+        <div class="filter-actions">
+            <button
+                class="button button-primary"
+                type="submit"
+            >
+                Apply
+            </button>
+
+            <a
+                class="button button-secondary"
+                href="{% url 'admin_portal:reviews' %}"
+            >
+                Reset
+            </a>
+        </div>
+
+    </form>
+
+</section>
+
+
+<section class="panel">
+
+    <div class="panel-heading">
+
+        <div>
+            <h3>Platform Reviews</h3>
+
+            <p>
+                Ratings and written feedback submitted by passengers
+            </p>
+        </div>
+
+        <span class="result-count">
+            {{ reviews_page.paginator.count }}
+            result{{ reviews_page.paginator.count|pluralize }}
+        </span>
+
+    </div>
+
+
+    {% if reviews_page.object_list %}
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Reviewer</th>
+                        <th>Driver</th>
+                        <th>Trip</th>
+                        <th>Rating</th>
+                        <th>Comment</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for review in reviews_page %}
+
+                        <tr>
+
+                            <td>
+                                <div class="person">
+
+                                    <span class="avatar">
+                                        {{ review.reviewer.username|slice:":1" }}
+                                    </span>
+
+                                    <span>
+                                        <strong>
+                                            {% if review.reviewer.get_full_name %}
+                                                {{ review.reviewer.get_full_name }}
+                                            {% else %}
+                                                {{ review.reviewer.username }}
+                                            {% endif %}
+                                        </strong>
+
+                                        <span>
+                                            {{ review.reviewer.email|default:"No email" }}
+                                        </span>
+                                    </span>
+
+                                </div>
+                            </td>
+
+
+                            <td>
+                                <div class="person">
+
+                                    <span class="avatar">
+                                        {{ review.trip.driver.username|slice:":1" }}
+                                    </span>
+
+                                    <span>
+                                        <strong>
+                                            {% if review.trip.driver.get_full_name %}
+                                                {{ review.trip.driver.get_full_name }}
+                                            {% else %}
+                                                {{ review.trip.driver.username }}
+                                            {% endif %}
+                                        </strong>
+
+                                        <span>
+                                            Driver
+                                        </span>
+                                    </span>
+
+                                </div>
+                            </td>
+
+
+                            <td>
+                                <div class="route">
+
+                                    <strong>
+                                        {{ review.trip.start_location }}
+                                        →
+                                        {{ review.trip.end_location }}
+                                    </strong>
+
+                                    <span>
+                                        Trip #{{ review.trip.pk }}
+
+                                        {% if review.trip.date %}
+                                            ·
+                                            {{ review.trip.date|date:"M d, Y" }}
+                                        {% endif %}
+                                    </span>
+
+                                </div>
+                            </td>
+
+
+                            <td>
+                                <div class="stars">
+
+                                    {% if review.rating == 5 %}
+                                        ★★★★★
+
+                                    {% elif review.rating == 4 %}
+                                        ★★★★☆
+
+                                    {% elif review.rating == 3 %}
+                                        ★★★☆☆
+
+                                    {% elif review.rating == 2 %}
+                                        ★★☆☆☆
+
+                                    {% elif review.rating == 1 %}
+                                        ★☆☆☆☆
+
+                                    {% else %}
+                                        ☆☆☆☆☆
+                                    {% endif %}
+
+                                </div>
+
+                                <div class="rating-number">
+                                    {{ review.rating }}/5
+                                </div>
+                            </td>
+
+
+                            <td>
+                                <div class="comment">
+                                    {{ review.comment|default:"No written comment."|truncatechars:100 }}
+                                </div>
+                            </td>
+
+
+                            <td>
+                                <a
+                                    class="action-button"
+                                    href="{% url 'admin_portal:trip_detail' review.trip.pk %}"
+                                >
+                                    View Trip
+                                </a>
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% if reviews_page.paginator.num_pages > 1 %}
+
+            <div class="pagination">
+
+                <div>
+                    Showing
+                    {{ reviews_page.start_index }}
+                    to
+                    {{ reviews_page.end_index }}
+                    of
+                    {{ reviews_page.paginator.count }}
+                    reviews
+                </div>
+
+
+                <div class="pagination-links">
+
+                    {% if reviews_page.has_previous %}
+
+                        <a
+                            class="page-link"
+                            href="?q={{ search_query|urlencode }}&rating={{ rating_filter }}&sort={{ sort_option }}&page={{ reviews_page.previous_page_number }}"
+                        >
+                            Previous
+                        </a>
+
+                    {% endif %}
+
+
+                    {% for page_number in reviews_page.paginator.page_range %}
+
+                        {% if page_number == reviews_page.number %}
+
+                            <span class="page-link active">
+                                {{ page_number }}
+                            </span>
+
+                        {% elif page_number >= reviews_page.number|add:"-2" and page_number <= reviews_page.number|add:"2" %}
+
+                            <a
+                                class="page-link"
+                                href="?q={{ search_query|urlencode }}&rating={{ rating_filter }}&sort={{ sort_option }}&page={{ page_number }}"
+                            >
+                                {{ page_number }}
+                            </a>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+
+                    {% if reviews_page.has_next %}
+
+                        <a
+                            class="page-link"
+                            href="?q={{ search_query|urlencode }}&rating={{ rating_filter }}&sort={{ sort_option }}&page={{ reviews_page.next_page_number }}"
+                        >
+                            Next
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+
+    {% else %}
+
+        <div class="empty-state">
+            No reviews match the selected search and rating filters.
+        </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

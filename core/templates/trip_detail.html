@@ -1,0 +1,1037 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ trip.start_location }} to {{ trip.end_location }} | RideShare
+{% endblock %}
+
+{% block extra_css %}
+
+/* =========================
+   Trip detail page
+========================= */
+
+.trip-detail-page {
+    padding: 58px 0 100px;
+}
+
+.trip-detail-container {
+    width: min(1100px, calc(100% - 40px));
+    margin: 0 auto;
+}
+
+/* Back link */
+
+.back-link {
+    width: fit-content;
+    margin-bottom: 20px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    color: var(--dark);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+/* Main card */
+
+.trip-detail-card {
+    overflow: hidden;
+
+    border: 1px solid rgba(0, 0, 0, 0.045);
+    border-radius: 30px;
+    background: #ffffff;
+    box-shadow: 0 22px 55px rgba(28, 45, 36, 0.11);
+}
+
+/* Header */
+
+.trip-detail-header {
+    padding: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+
+    background: var(--dark);
+    color: #ffffff;
+}
+
+.trip-route {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.route-markers {
+    width: 22px;
+    height: 73px;
+
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.route-markers::before {
+    content: "";
+    position: absolute;
+    top: 13px;
+    bottom: 13px;
+    left: 50%;
+
+    width: 2px;
+    transform: translateX(-50%);
+
+    background: rgba(255, 255, 255, 0.35);
+}
+
+.route-marker {
+    position: relative;
+    z-index: 1;
+
+    width: 13px;
+    height: 13px;
+
+    border: 3px solid var(--dark);
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 0 0 2px #ffffff;
+}
+
+.route-marker.end {
+    background: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent);
+}
+
+.route-locations {
+    display: grid;
+    gap: 14px;
+}
+
+.route-location-label {
+    display: block;
+    margin-bottom: 3px;
+
+    color: rgba(255, 255, 255, 0.58);
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+}
+
+.route-location-name {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 750;
+}
+
+.trip-price-box {
+    min-width: 150px;
+    text-align: right;
+}
+
+.trip-price-label {
+    margin: 0 0 4px;
+
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+}
+
+.trip-price {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+}
+
+.trip-price-subtitle {
+    margin: 3px 0 0;
+    color: rgba(255, 255, 255, 0.74);
+    font-size: 0.8rem;
+}
+
+/* Main content */
+
+.trip-detail-body {
+    padding: 34px;
+
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+    gap: 34px;
+
+    background: #f7f6f2;
+}
+
+.detail-column {
+    min-width: 0;
+}
+
+.detail-section + .detail-section {
+    margin-top: 30px;
+}
+
+.detail-heading {
+    margin: 0 0 16px;
+    font-size: 1.15rem;
+    letter-spacing: -0.02em;
+}
+
+/* Information grid */
+
+.trip-info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.trip-info-card {
+    min-height: 110px;
+    padding: 17px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    border: 1px solid #e5e5df;
+    border-radius: 18px;
+    background: #ffffff;
+}
+
+.trip-info-icon {
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+    background: rgba(173, 243, 63, 0.28);
+    font-size: 1rem;
+}
+
+.trip-info-label {
+    margin: 15px 0 4px;
+
+    color: #7a817a;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+}
+
+.trip-info-value {
+    margin: 0;
+    color: var(--text);
+    font-size: 0.92rem;
+    font-weight: 700;
+}
+
+/* Additional information */
+
+.additional-info-card {
+    padding: 20px;
+
+    border: 1px solid #e5e5df;
+    border-radius: 18px;
+    background: #ffffff;
+}
+
+.additional-info-card p {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.7;
+}
+
+.stops-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+}
+
+.stop-chip {
+    padding: 9px 13px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    border-radius: 999px;
+    background: #e9e9e4;
+    color: #3d433e;
+
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+/* Driver card */
+
+.driver-card {
+    padding: 23px;
+
+    border: 1px solid #e5e5df;
+    border-radius: 22px;
+    background: #ffffff;
+    box-shadow: 0 10px 25px rgba(29, 45, 37, 0.05);
+}
+
+.driver-card-top {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.driver-avatar-large {
+    width: 54px;
+    height: 54px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 17px;
+    background: var(--dark);
+    color: #ffffff;
+
+    font-size: 1.2rem;
+    font-weight: 800;
+}
+
+.driver-name {
+    margin: 0;
+    font-size: 1.05rem;
+}
+
+.driver-role {
+    margin: 5px 0 0;
+    color: var(--muted);
+    font-size: 0.8rem;
+}
+
+.driver-meta {
+    margin-top: 19px;
+    padding-top: 17px;
+
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+
+    border-top: 1px solid #ecece6;
+}
+
+.driver-meta-item {
+    padding: 12px;
+
+    border-radius: 14px;
+    background: #f5f5f1;
+}
+
+.driver-meta-label {
+    display: block;
+    margin-bottom: 4px;
+
+    color: #868b86;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.driver-meta-value {
+    color: var(--text);
+    font-size: 0.84rem;
+    font-weight: 700;
+}
+
+/* Booking form */
+
+.booking-card {
+    margin-top: 18px;
+    padding: 23px;
+
+    border: 1px solid #e5e5df;
+    border-radius: 22px;
+    background: #ffffff;
+    box-shadow: 0 10px 25px rgba(29, 45, 37, 0.05);
+}
+
+.booking-title {
+    margin: 0;
+    font-size: 1.12rem;
+}
+
+.booking-subtitle {
+    margin: 7px 0 20px;
+    color: var(--muted);
+    font-size: 0.83rem;
+    line-height: 1.55;
+}
+
+.booking-field label {
+    display: block;
+    margin: 0 0 8px 3px;
+
+    color: #555c56;
+    font-size: 0.76rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.seat-input-wrap {
+    position: relative;
+}
+
+.seat-input-wrap input {
+    min-height: 53px;
+    padding-right: 75px;
+    border-radius: 15px;
+}
+
+.seat-input-suffix {
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    transform: translateY(-50%);
+
+    color: #777d77;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.seat-availability-text {
+    margin: 8px 0 0 3px;
+    color: var(--muted);
+    font-size: 0.78rem;
+}
+
+.booking-summary {
+    margin: 18px 0;
+    padding: 16px;
+
+    display: grid;
+    gap: 11px;
+
+    border-radius: 16px;
+    background: #f2f2ed;
+}
+
+.booking-summary-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+
+    color: #5c625d;
+    font-size: 0.84rem;
+}
+
+.booking-summary-row.total {
+    padding-top: 11px;
+
+    border-top: 1px solid #dcded8;
+    color: var(--text);
+    font-size: 1rem;
+    font-weight: 800;
+}
+
+.book-button {
+    width: 100%;
+    min-height: 52px;
+}
+
+/* Owner and sold-out states */
+
+.trip-owner-card,
+.sold-out-card {
+    margin-top: 18px;
+    padding: 23px;
+
+    border-radius: 22px;
+    text-align: center;
+}
+
+.trip-owner-card {
+    background: rgba(173, 243, 63, 0.24);
+    color: var(--dark);
+}
+
+.sold-out-card {
+    background: #f7dede;
+    color: #873b3b;
+}
+
+.trip-owner-card h3,
+.sold-out-card h3 {
+    margin: 0;
+    font-size: 1.05rem;
+}
+
+.trip-owner-card p,
+.sold-out-card p {
+    margin: 8px 0 0;
+    font-size: 0.84rem;
+    line-height: 1.55;
+}
+
+/* Messages */
+
+.page-messages {
+    width: min(1100px, calc(100% - 40px));
+    margin: 0 auto 20px;
+}
+
+.message-alert {
+    margin-bottom: 10px;
+    padding: 14px 17px;
+
+    border-radius: 14px;
+    background: #ffffff;
+    box-shadow: 0 7px 20px rgba(25, 37, 31, 0.07);
+
+    font-size: 0.88rem;
+    font-weight: 600;
+}
+
+.message-alert.success {
+    border-left: 4px solid #35a36c;
+}
+
+.message-alert.error {
+    border-left: 4px solid #db4d4d;
+}
+
+.message-alert.warning {
+    border-left: 4px solid #e1a736;
+}
+
+/* Responsive */
+
+@media (max-width: 850px) {
+    .trip-detail-body {
+        grid-template-columns: 1fr;
+    }
+
+    .trip-info-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 650px) {
+    .trip-detail-page {
+        padding-top: 34px;
+    }
+
+    .trip-detail-container,
+    .page-messages {
+        width: min(100% - 24px, 1100px);
+    }
+
+    .trip-detail-header {
+        padding: 25px;
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .trip-price-box {
+        text-align: left;
+    }
+
+    .trip-detail-body {
+        padding: 22px;
+    }
+
+    .trip-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ride-route {
+        font-size: 1rem;
+    }
+}
+
+{% endblock %}
+
+{% block content %}
+
+<div class="trip-detail-page">
+
+    {% if messages %}
+        <div class="page-messages">
+            {% for message in messages %}
+                <div class="message-alert {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="trip-detail-container">
+
+        <a href="{% url 'find_rides' %}" class="back-link">
+            <span aria-hidden="true">←</span>
+            Back to available rides
+        </a>
+
+        <article class="trip-detail-card">
+
+            <!-- Trip header -->
+
+            <header class="trip-detail-header">
+
+                <div class="trip-route">
+
+                    <div class="route-markers" aria-hidden="true">
+                        <span class="route-marker"></span>
+                        <span class="route-marker end"></span>
+                    </div>
+
+                    <div class="route-locations">
+
+                        <div>
+                            <span class="route-location-label">
+                                Leaving from
+                            </span>
+
+                            <p class="route-location-name">
+                                {{ trip.start_location }}
+                            </p>
+                        </div>
+
+                        <div>
+                            <span class="route-location-label">
+                                Going to
+                            </span>
+
+                            <p class="route-location-name">
+                                {{ trip.end_location }}
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="trip-price-box">
+                    <p class="trip-price-label">
+                        Price
+                    </p>
+
+                    <p class="trip-price">
+                        ${{ trip.price_per_seat|floatformat:2 }}
+                    </p>
+
+                    <p class="trip-price-subtitle">
+                        per passenger
+                    </p>
+                </div>
+
+            </header>
+
+            <!-- Trip content -->
+
+            <div class="trip-detail-body">
+
+                <!-- Left column -->
+
+                <div class="detail-column">
+
+                    <section class="detail-section">
+
+                        <h2 class="detail-heading">
+                            Trip details
+                        </h2>
+
+                        <div class="trip-info-grid">
+
+                            <article class="trip-info-card">
+                                <span class="trip-info-icon">📅</span>
+
+                                <div>
+                                    <p class="trip-info-label">
+                                        Travel date
+                                    </p>
+
+                                    <p class="trip-info-value">
+                                        {% if trip.date %}
+                                            {{ trip.date|date:"M d, Y" }}
+                                        {% else %}
+                                            Not specified
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </article>
+
+                            <article class="trip-info-card">
+                                <span class="trip-info-icon">🕐</span>
+
+                                <div>
+                                    <p class="trip-info-label">
+                                        Departure
+                                    </p>
+
+                                    <p class="trip-info-value">
+                                        {% if trip.time %}
+                                            {{ trip.time|time:"g:i A" }}
+                                        {% else %}
+                                            Not specified
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </article>
+
+                            <article class="trip-info-card">
+                                <span class="trip-info-icon">💺</span>
+
+                                <div>
+                                    <p class="trip-info-label">
+                                        Seats available
+                                    </p>
+
+                                    <p class="trip-info-value">
+                                        {{ trip.seats_available }}
+                                        seat{{ trip.seats_available|pluralize }}
+                                    </p>
+                                </div>
+                            </article>
+
+                        </div>
+
+                    </section>
+
+                    <section class="detail-section">
+
+                        <h2 class="detail-heading">
+                            About this ride
+                        </h2>
+
+                        <div class="additional-info-card">
+                            <p>
+                                Travel comfortably from
+                                <strong>{{ trip.start_location }}</strong>
+                                to
+                                <strong>{{ trip.end_location }}</strong>.
+                                Contact details can be shared after your
+                                reservation is confirmed.
+                            </p>
+                        </div>
+
+                    </section>
+
+                    <section class="detail-section">
+
+                        <h2 class="detail-heading">
+                            Planned stops
+                        </h2>
+
+                        <div class="stops-list">
+                            <span class="stop-chip">
+                                <span>●</span>
+                                No additional stops listed
+                            </span>
+                        </div>
+
+                    </section>
+
+                </div>
+
+                <!-- Right column -->
+
+                <aside class="detail-column">
+
+                    <section class="driver-card">
+
+                        <div class="driver-card-top">
+
+                            <div class="driver-avatar-large">
+                                {{ trip.driver.username|slice:":1"|upper }}
+                            </div>
+
+                            <div>
+                                <h2 class="driver-name">
+                                    {{ trip.driver.username }}
+                                </h2>
+
+                                <p class="driver-role">
+                                    Your RideShare driver
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <div class="driver-meta">
+
+                            <div class="driver-meta-item">
+                                <span class="driver-meta-label">
+                                    Rating
+                                </span>
+
+                                <span class="driver-meta-value">
+                                    ⭐ 5.0
+                                </span>
+                            </div>
+
+                            <div class="driver-meta-item">
+                                <span class="driver-meta-label">
+                                    Status
+                                </span>
+
+                                <span class="driver-meta-value">
+                                    ✓ Verified
+                                </span>
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    {% if trip.driver == user %}
+
+                        <section class="trip-owner-card">
+                            <h3>This is your ride</h3>
+
+                            <p>
+                                Passengers can find and reserve available seats
+                                from the ride search page.
+                            </p>
+                        </section>
+
+                    {% elif trip.seats_available <= 0 %}
+
+                        <section class="sold-out-card">
+                            <h3>This ride is fully booked</h3>
+
+                            <p>
+                                There are currently no seats available for this
+                                journey.
+                            </p>
+                        </section>
+
+                    {% else %}
+
+                        <form
+                            action="{% url 'book_trip' trip.id %}"
+                            method="post"
+                            class="booking-card"
+                            id="bookingForm"
+                        >
+                            {% csrf_token %}
+
+                            <h2 class="booking-title">
+                                Reserve your seat
+                            </h2>
+
+                            <p class="booking-subtitle">
+                                Select how many passengers will be traveling.
+                            </p>
+
+                            <div class="booking-field">
+
+                                <label for="seatCount">
+                                    Number of seats
+                                </label>
+
+                                <div class="seat-input-wrap">
+                                    <input
+                                        id="seatCount"
+                                        type="number"
+                                        name="seats"
+                                        min="1"
+                                        max="{{ trip.seats_available }}"
+                                        value="1"
+                                        required
+                                    >
+
+                                    <p class="seat-availability-text">
+                                        {{ trip.seats_available }}
+                                        seat{{ trip.seats_available|pluralize }}
+                                        currently available
+                                    </p>
+
+                                    <span class="seat-input-suffix">
+                                        max {{ trip.seats_available }}
+                                    </span>
+                                </div>
+
+                            </div>
+
+                            <div class="booking-summary">
+
+                                <div class="booking-summary-row">
+                                    <span>Price per seat</span>
+
+                                    <strong>
+                                        ${{ trip.price_per_seat|floatformat:2 }}
+                                    </strong>
+                                </div>
+
+                                <div class="booking-summary-row">
+                                    <span>Selected seats</span>
+
+                                    <strong id="selectedSeats">
+                                        1
+                                    </strong>
+                                </div>
+
+                                <div class="booking-summary-row total">
+                                    <span>Total</span>
+
+                                    <span>
+                                        $<span id="bookingTotal">
+                                            {{ trip.price_per_seat|floatformat:2 }}
+                                        </span>
+                                    </span>
+                                </div>
+
+                            </div>
+
+                            {% if user.is_authenticated %}
+                                <button
+                                    type="submit"
+                                    class="btn btn-dark book-button"
+                                >
+                                    Confirm booking
+                                    <span aria-hidden="true">→</span>
+                                </button>
+                            {% else %}
+                                <a
+                                    href="{% url 'login' %}?next={{ request.path }}"
+                                    class="btn btn-dark book-button"
+                                >
+                                    Log in to book
+                                </a>
+                            {% endif %}
+
+                        </form>
+
+                    {% endif %}
+
+                </aside>
+
+            </div>
+
+        </article>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const seatInput =
+            document.getElementById("seatCount");
+
+        const selectedSeats =
+            document.getElementById("selectedSeats");
+
+        const bookingTotal =
+            document.getElementById("bookingTotal");
+
+        const bookingForm =
+            document.getElementById("bookingForm");
+
+        if (
+            !seatInput ||
+            !selectedSeats ||
+            !bookingTotal
+        ) {
+            return;
+        }
+
+        const pricePerSeat = Number(
+            "{{ trip.price_per_seat|default:0 }}"
+        );
+
+        const minimumSeats = Number(
+            seatInput.min || 1
+        );
+
+        const maximumSeats = Number(
+            seatInput.max || 1
+        );
+
+        function getSafeSeatCount() {
+            const typedValue =
+                Number(seatInput.value);
+
+            if (
+                seatInput.value === "" ||
+                !Number.isFinite(typedValue)
+            ) {
+                return minimumSeats;
+            }
+
+            return Math.min(
+                Math.max(typedValue, minimumSeats),
+                maximumSeats
+            );
+        }
+
+        function updateBookingPreview() {
+            const seats = getSafeSeatCount();
+
+            selectedSeats.textContent = seats;
+
+            bookingTotal.textContent = (
+                pricePerSeat * seats
+            ).toFixed(2);
+        }
+
+        function correctSeatInput() {
+            seatInput.value = getSafeSeatCount();
+            updateBookingPreview();
+        }
+
+        /*
+         * While typing, update only the preview.
+         * Do not change the input value.
+         */
+        seatInput.addEventListener(
+            "input",
+            updateBookingPreview
+        );
+
+        /*
+         * Correct invalid values after the user
+         * leaves the field or uses the arrows.
+         */
+        seatInput.addEventListener(
+            "change",
+            correctSeatInput
+        );
+
+        seatInput.addEventListener(
+            "blur",
+            correctSeatInput
+        );
+
+        if (bookingForm) {
+            bookingForm.addEventListener(
+                "submit",
+                function () {
+                    correctSeatInput();
+                }
+            );
+        }
+
+        updateBookingPreview();
+    });
+</script>
+
+{% endblock %}

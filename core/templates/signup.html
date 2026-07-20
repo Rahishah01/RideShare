@@ -1,0 +1,765 @@
+{% extends "base.html" %}
+
+{% block title %}Create Account | RideShare{% endblock %}
+
+{% block extra_css %}
+
+/* =========================
+   Signup page
+========================= */
+
+.signup-page {
+    width: min(1180px, calc(100% - 40px));
+    min-height: calc(100vh - 145px);
+    margin: 38px auto 70px;
+
+    display: grid;
+    grid-template-columns: minmax(420px, 1.08fr) minmax(0, 0.92fr);
+
+    overflow: hidden;
+
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    border-radius: 32px;
+    background: #ffffff;
+    box-shadow: 0 24px 60px rgba(28, 45, 36, 0.12);
+}
+
+/* Left visual */
+
+.signup-visual {
+    position: relative;
+    min-height: 760px;
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(22, 45, 35, 0.08),
+            rgba(22, 45, 35, 0.56)
+        ),
+        url("https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&w=1400&q=85")
+        center / cover no-repeat;
+}
+
+.signup-visual::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(14, 31, 23, 0.05) 28%,
+            rgba(14, 31, 23, 0.84) 100%
+        );
+}
+
+.signup-visual-content {
+    position: absolute;
+    z-index: 2;
+    left: 44px;
+    right: 44px;
+    bottom: 44px;
+
+    color: #ffffff;
+}
+
+.signup-visual-badge {
+    width: fit-content;
+    margin-bottom: 18px;
+    padding: 9px 14px;
+
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.11);
+    backdrop-filter: blur(12px);
+
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.signup-visual-title {
+    max-width: 520px;
+    margin: 0;
+
+    font-size: clamp(2.2rem, 4vw, 3.8rem);
+    line-height: 1.06;
+    letter-spacing: -0.045em;
+}
+
+.signup-visual-description {
+    max-width: 500px;
+    margin: 17px 0 0;
+
+    color: rgba(255, 255, 255, 0.76);
+    line-height: 1.7;
+}
+
+.signup-benefits {
+    margin-top: 28px;
+
+    display: grid;
+    gap: 10px;
+}
+
+.signup-benefit {
+    padding: 13px 15px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.10);
+    backdrop-filter: blur(10px);
+
+    color: rgba(255, 255, 255, 0.83);
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+.signup-benefit-icon {
+    width: 26px;
+    height: 26px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--dark);
+
+    font-size: 0.75rem;
+    font-weight: 800;
+}
+
+/* Form section */
+
+.signup-form-section {
+    padding: 54px 58px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    background: #ffffff;
+}
+
+.signup-back-link {
+    width: fit-content;
+    margin-bottom: 34px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    color: var(--dark);
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 700;
+}
+
+.signup-back-link:hover {
+    text-decoration: underline;
+}
+
+.signup-eyebrow {
+    width: fit-content;
+    margin-bottom: 16px;
+    padding: 8px 13px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    border-radius: 999px;
+    background: rgba(173, 243, 63, 0.25);
+    color: var(--dark);
+
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.signup-title {
+    margin: 0;
+
+    font-size: clamp(2.45rem, 4.8vw, 4rem);
+    line-height: 1;
+    letter-spacing: -0.055em;
+}
+
+.signup-description {
+    margin: 18px 0 0;
+
+    color: var(--muted);
+    line-height: 1.7;
+}
+
+.signup-description a {
+    color: var(--dark);
+    font-weight: 700;
+}
+
+/* Form */
+
+.signup-form {
+    margin-top: 32px;
+}
+
+.signup-field {
+    margin-bottom: 18px;
+}
+
+.signup-field label {
+    display: block;
+    margin: 0 0 8px 3px;
+
+    color: #4d554f;
+    font-size: 0.76rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.065em;
+}
+
+.signup-input-wrap {
+    position: relative;
+}
+
+.signup-input-icon {
+    position: absolute;
+    top: 50%;
+    left: 17px;
+    transform: translateY(-50%);
+
+    color: #7c837d;
+    pointer-events: none;
+}
+
+.signup-field input {
+    min-height: 54px;
+    padding: 14px 48px 14px 47px;
+
+    border: 1px solid #dbdcd6;
+    border-radius: 16px;
+    background: #fafaf8;
+
+    font-size: 0.94rem;
+}
+
+.signup-field input:focus {
+    border-color: var(--dark);
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(32, 61, 49, 0.09);
+}
+
+.password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    transform: translateY(-50%);
+
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: #626962;
+
+    cursor: pointer;
+}
+
+.password-toggle:hover {
+    background: #ecece7;
+}
+
+/* Password help */
+
+.password-help-card {
+    margin: 2px 0 18px;
+    padding: 15px;
+
+    border-radius: 15px;
+    background: #f1f2ed;
+}
+
+.password-help-title {
+    margin: 0 0 9px;
+
+    color: #4f5650;
+    font-size: 0.74rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.065em;
+}
+
+.password-help-list {
+    margin: 0;
+    padding: 0;
+
+    display: grid;
+    gap: 7px;
+
+    list-style: none;
+}
+
+.password-help-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+
+    color: #686f69;
+    font-size: 0.78rem;
+    line-height: 1.45;
+}
+
+.password-help-check {
+    width: 19px;
+    height: 19px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+    background: rgba(173, 243, 63, 0.42);
+    color: var(--dark);
+
+    font-size: 0.65rem;
+    font-weight: 800;
+}
+
+/* Errors */
+
+.field-error {
+    margin: 8px 0 0;
+    padding: 10px 12px;
+
+    border-left: 3px solid #dc4c4c;
+    border-radius: 9px;
+    background: #fbeaea;
+    color: #8b3434;
+
+    font-size: 0.78rem;
+    line-height: 1.45;
+}
+
+.field-error ul {
+    margin: 0;
+    padding-left: 17px;
+}
+
+.form-error-summary {
+    margin-bottom: 18px;
+    padding: 14px 16px;
+
+    border-left: 4px solid #dc4c4c;
+    border-radius: 12px;
+    background: #fbeaea;
+    color: #8b3434;
+
+    font-size: 0.84rem;
+    line-height: 1.55;
+}
+
+/* Terms and button */
+
+.signup-terms {
+    margin: 2px 0 20px;
+
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+
+    color: var(--muted);
+    font-size: 0.78rem;
+    line-height: 1.5;
+}
+
+.signup-terms input {
+    width: 16px;
+    height: 16px;
+    margin: 2px 0 0;
+    flex-shrink: 0;
+}
+
+.signup-button {
+    width: 100%;
+    min-height: 54px;
+}
+
+.signup-footer-note {
+    margin-top: 22px;
+
+    color: #858b85;
+    font-size: 0.76rem;
+    line-height: 1.5;
+    text-align: center;
+}
+
+/* Responsive */
+
+@media (max-width: 940px) {
+    .signup-page {
+        grid-template-columns: 1fr;
+    }
+
+    .signup-visual {
+        min-height: 470px;
+    }
+
+    .signup-form-section {
+        padding: 50px;
+    }
+}
+
+@media (max-width: 600px) {
+    .signup-page {
+        width: min(100% - 24px, 1180px);
+        min-height: auto;
+        margin-top: 24px;
+        border-radius: 25px;
+    }
+
+    .signup-form-section {
+        padding: 36px 22px;
+    }
+
+    .signup-visual {
+        min-height: 380px;
+    }
+
+    .signup-visual-content {
+        left: 24px;
+        right: 24px;
+        bottom: 25px;
+    }
+
+    .signup-visual-description {
+        display: none;
+    }
+
+    .signup-benefits {
+        display: none;
+    }
+
+    .signup-back-link {
+        margin-bottom: 28px;
+    }
+}
+
+{% endblock %}
+
+{% block content %}
+
+<section class="signup-page">
+
+    <!-- Visual section -->
+
+    <div class="signup-visual">
+
+        <div class="signup-visual-content">
+
+            <div class="signup-visual-badge">
+                🚗 Join the RideShare community
+            </div>
+
+            <h2 class="signup-visual-title">
+                Travel farther while spending less.
+            </h2>
+
+            <p class="signup-visual-description">
+                Create an account to find available rides, reserve seats,
+                offer your own trips, and connect with people traveling in
+                the same direction.
+            </p>
+
+            <div class="signup-benefits">
+
+                <div class="signup-benefit">
+                    <span class="signup-benefit-icon">✓</span>
+                    Search available rides by destination and date
+                </div>
+
+                <div class="signup-benefit">
+                    <span class="signup-benefit-icon">✓</span>
+                    Reserve seats and manage your bookings
+                </div>
+
+                <div class="signup-benefit">
+                    <span class="signup-benefit-icon">✓</span>
+                    Offer rides and share your travel expenses
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Signup form -->
+
+    <div class="signup-form-section">
+
+        <a href="{% url 'home' %}" class="signup-back-link">
+            <span aria-hidden="true">←</span>
+            Back to home
+        </a>
+
+        <div class="signup-eyebrow">
+            <span>✨</span>
+            Create your account
+        </div>
+
+        <h1 class="signup-title">
+            Start your journey
+        </h1>
+
+        <p class="signup-description">
+            Already have an account?
+            <a href="{% url 'login' %}">
+                Log in
+            </a>
+        </p>
+
+        <form method="post" class="signup-form" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="form-error-summary">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <!-- Username -->
+
+            <div class="signup-field">
+                <label for="id_username">
+                    Username
+                </label>
+
+                <div class="signup-input-wrap">
+                    <span class="signup-input-icon">●</span>
+
+                    <input
+                        id="id_username"
+                        type="text"
+                        name="username"
+                        placeholder="Choose a username"
+                        value="{{ form.username.value|default:'' }}"
+                        autocomplete="username"
+                        maxlength="150"
+                        autofocus
+                        required
+                    >
+                </div>
+
+                {% if form.username.errors %}
+                    <div class="field-error">
+                        {{ form.username.errors }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Email -->
+
+            <div class="signup-field">
+                <label for="id_email">
+                    Email address
+                </label>
+
+                <div class="signup-input-wrap">
+                    <span class="signup-input-icon">✉</span>
+
+                    <input
+                        id="id_email"
+                        type="email"
+                        name="email"
+                        placeholder="you@example.com"
+                        value="{{ form.email.value|default:'' }}"
+                        autocomplete="email"
+                        required
+                    >
+                </div>
+
+                {% if form.email.errors %}
+                    <div class="field-error">
+                        {{ form.email.errors }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Password -->
+
+            <div class="signup-field">
+                <label for="id_password1">
+                    Password
+                </label>
+
+                <div class="signup-input-wrap">
+                    <span class="signup-input-icon">◆</span>
+
+                    <input
+                        id="id_password1"
+                        type="password"
+                        name="password1"
+                        placeholder="Create a strong password"
+                        autocomplete="new-password"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        data-password-target="id_password1"
+                        aria-label="Show password"
+                    >
+                        👁
+                    </button>
+                </div>
+
+                {% if form.password1.errors %}
+                    <div class="field-error">
+                        {{ form.password1.errors }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="password-help-card">
+                <p class="password-help-title">
+                    Your password should
+                </p>
+
+                <ul class="password-help-list">
+                    <li class="password-help-item">
+                        <span class="password-help-check">✓</span>
+                        Contain at least 8 characters
+                    </li>
+
+                    <li class="password-help-item">
+                        <span class="password-help-check">✓</span>
+                        Not be too similar to your username or email
+                    </li>
+
+                    <li class="password-help-item">
+                        <span class="password-help-check">✓</span>
+                        Not be a commonly used password
+                    </li>
+
+                    <li class="password-help-item">
+                        <span class="password-help-check">✓</span>
+                        Not contain only numbers
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Confirm password -->
+
+            <div class="signup-field">
+                <label for="id_password2">
+                    Confirm password
+                </label>
+
+                <div class="signup-input-wrap">
+                    <span class="signup-input-icon">◆</span>
+
+                    <input
+                        id="id_password2"
+                        type="password"
+                        name="password2"
+                        placeholder="Enter the password again"
+                        autocomplete="new-password"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        data-password-target="id_password2"
+                        aria-label="Show password"
+                    >
+                        👁
+                    </button>
+                </div>
+
+                {% if form.password2.errors %}
+                    <div class="field-error">
+                        {{ form.password2.errors }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <label class="signup-terms">
+                <input type="checkbox" required>
+
+                <span>
+                    I agree to use RideShare responsibly and provide accurate
+                    information when offering or booking a ride.
+                </span>
+            </label>
+
+            <button type="submit" class="btn btn-dark signup-button">
+                Create account
+                <span aria-hidden="true">→</span>
+            </button>
+
+        </form>
+
+        <p class="signup-footer-note">
+            Your account information is used only to provide RideShare
+            features and improve your experience.
+        </p>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const passwordButtons =
+            document.querySelectorAll("[data-password-target]");
+
+        passwordButtons.forEach(function (button) {
+            button.addEventListener("click", function () {
+                const targetId =
+                    button.getAttribute("data-password-target");
+
+                const passwordInput =
+                    document.getElementById(targetId);
+
+                if (!passwordInput) {
+                    return;
+                }
+
+                const passwordIsHidden =
+                    passwordInput.type === "password";
+
+                passwordInput.type =
+                    passwordIsHidden ? "text" : "password";
+
+                button.textContent =
+                    passwordIsHidden ? "🙈" : "👁";
+
+                button.setAttribute(
+                    "aria-label",
+                    passwordIsHidden
+                        ? "Hide password"
+                        : "Show password"
+                );
+            });
+        });
+    });
+</script>
+
+{% endblock %}

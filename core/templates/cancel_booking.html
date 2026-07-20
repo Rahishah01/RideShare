@@ -1,0 +1,789 @@
+{% extends "base.html" %}
+
+{% block title %}Cancel Booking | RideShare{% endblock %}
+
+{% block extra_css %}
+
+/* =========================
+   Cancel booking page
+========================= */
+
+.cancel-page {
+    padding: 58px 0 100px;
+}
+
+.cancel-container {
+    width: min(980px, calc(100% - 40px));
+    margin: 0 auto;
+}
+
+.cancel-back-link {
+    width: fit-content;
+    margin-bottom: 22px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    color: var(--dark);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.cancel-back-link:hover {
+    text-decoration: underline;
+}
+
+/* Main layout */
+
+.cancel-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 0.72fr);
+    gap: 22px;
+    align-items: start;
+}
+
+/* Ride summary */
+
+.cancel-summary-card {
+    overflow: hidden;
+
+    border: 1px solid rgba(0, 0, 0, 0.045);
+    border-radius: 28px;
+    background: #ffffff;
+    box-shadow: 0 20px 50px rgba(28, 45, 36, 0.09);
+}
+
+.cancel-summary-header {
+    padding: 30px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+
+    background: var(--dark);
+    color: #ffffff;
+}
+
+.cancel-route-label {
+    margin: 0 0 7px;
+
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.cancel-route {
+    margin: 0;
+
+    font-size: clamp(1.45rem, 3vw, 2rem);
+    letter-spacing: -0.035em;
+}
+
+.cancel-route-arrow {
+    margin: 0 9px;
+    color: var(--accent);
+}
+
+.cancel-price {
+    text-align: right;
+}
+
+.cancel-price-label {
+    display: block;
+    margin-bottom: 4px;
+
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    font-weight: 800;
+    letter-spacing: 0.07em;
+}
+
+.cancel-price strong {
+    font-size: 1.75rem;
+}
+
+.cancel-summary-body {
+    padding: 28px;
+}
+
+.cancel-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 13px;
+}
+
+.cancel-info-card {
+    padding: 17px;
+
+    border: 1px solid #e6e6e0;
+    border-radius: 17px;
+    background: #f8f8f5;
+}
+
+.cancel-info-label {
+    display: block;
+    margin-bottom: 6px;
+
+    color: #808680;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.065em;
+}
+
+.cancel-info-value {
+    color: var(--text);
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.cancel-driver {
+    margin-top: 19px;
+    padding-top: 18px;
+
+    display: flex;
+    align-items: center;
+    gap: 11px;
+
+    border-top: 1px solid #ecece7;
+    color: var(--muted);
+    font-size: 0.84rem;
+}
+
+.cancel-driver-avatar {
+    width: 37px;
+    height: 37px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+    background: var(--dark);
+    color: #ffffff;
+
+    font-weight: 800;
+}
+
+/* Form card */
+
+.cancel-form-card {
+    padding: 28px;
+
+    border: 1px solid rgba(0, 0, 0, 0.045);
+    border-radius: 28px;
+    background: #ffffff;
+    box-shadow: 0 20px 50px rgba(28, 45, 36, 0.09);
+}
+
+.cancel-warning-icon {
+    width: 54px;
+    height: 54px;
+    margin-bottom: 19px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 17px;
+    background: #ffe1e1;
+    color: #c63d3d;
+
+    font-size: 1.35rem;
+}
+
+.cancel-title {
+    margin: 0;
+
+    font-size: 1.55rem;
+    letter-spacing: -0.03em;
+}
+
+.cancel-description {
+    margin: 12px 0 24px;
+
+    color: var(--muted);
+    font-size: 0.87rem;
+    line-height: 1.65;
+}
+
+.cancel-field label {
+    display: block;
+    margin: 0 0 9px 3px;
+
+    color: #4f5650;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.065em;
+}
+
+.cancel-input-wrap {
+    position: relative;
+}
+
+.cancel-input-wrap input {
+    min-height: 54px;
+    padding-right: 88px;
+
+    border-radius: 16px;
+    background: #fafaf8;
+}
+
+.cancel-input-suffix {
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    transform: translateY(-50%);
+
+    color: #777d77;
+    font-size: 0.76rem;
+    font-weight: 700;
+}
+
+.cancel-preview {
+    margin-top: 18px;
+    padding: 16px;
+
+    display: grid;
+    gap: 11px;
+
+    border-radius: 16px;
+    background: #f2f2ed;
+}
+
+.cancel-preview-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+
+    color: var(--muted);
+    font-size: 0.82rem;
+}
+
+.cancel-preview-row strong {
+    color: var(--text);
+}
+
+.cancel-result {
+    margin-top: 16px;
+    padding: 13px 15px;
+
+    border-radius: 14px;
+    background: rgba(173, 243, 63, 0.22);
+    color: var(--dark);
+
+    font-size: 0.8rem;
+    font-weight: 700;
+    line-height: 1.5;
+}
+
+.cancel-actions {
+    margin-top: 22px;
+
+    display: grid;
+    gap: 10px;
+}
+
+.cancel-confirm-button {
+    width: 100%;
+    min-height: 52px;
+
+    background: #dc4c4c;
+    color: #ffffff;
+}
+
+.cancel-confirm-button:hover {
+    background: #c33f3f;
+}
+
+.cancel-back-button {
+    width: 100%;
+}
+
+/* Messages */
+
+.cancel-messages {
+    margin-bottom: 20px;
+}
+
+.cancel-message {
+    margin-bottom: 10px;
+    padding: 14px 17px;
+
+    border-radius: 14px;
+    background: #ffffff;
+    box-shadow: 0 8px 22px rgba(25, 37, 31, 0.07);
+
+    font-size: 0.87rem;
+    font-weight: 600;
+}
+
+.cancel-message.error {
+    border-left: 4px solid #dc4c4c;
+}
+
+.cancel-message.success {
+    border-left: 4px solid #35a36c;
+}
+
+/* Responsive */
+
+@media (max-width: 780px) {
+    .cancel-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 580px) {
+    .cancel-page {
+        padding-top: 36px;
+    }
+
+    .cancel-container {
+        width: min(100% - 24px, 980px);
+    }
+
+    .cancel-summary-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .cancel-price {
+        text-align: left;
+    }
+
+    .cancel-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cancel-summary-body,
+    .cancel-form-card {
+        padding: 22px;
+    }
+}
+
+{% endblock %}
+
+{% block content %}
+
+<div class="cancel-page">
+    <div class="cancel-container">
+
+        {% if messages %}
+            <div class="cancel-messages">
+                {% for message in messages %}
+                    <div class="cancel-message {{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <a href="{% url 'my_bookings' %}" class="cancel-back-link">
+            <span aria-hidden="true">←</span>
+            Back to my bookings
+        </a>
+
+        <div class="cancel-layout">
+
+            <!-- Ride summary -->
+
+            <section class="cancel-summary-card">
+
+                <header class="cancel-summary-header">
+
+                    <div>
+                        <p class="cancel-route-label">
+                            Reserved ride
+                        </p>
+
+                        <h1 class="cancel-route">
+                            {{ booking.trip.start_location }}
+
+                            <span class="cancel-route-arrow">
+                                →
+                            </span>
+
+                            {{ booking.trip.end_location }}
+                        </h1>
+                    </div>
+
+                    <div class="cancel-price">
+                        <span class="cancel-price-label">
+                            Price per seat
+                        </span>
+
+                        <strong>
+                            ${{ booking.trip.price_per_seat|floatformat:2 }}
+                        </strong>
+                    </div>
+
+                </header>
+
+                <div class="cancel-summary-body">
+
+                    <div class="cancel-info-grid">
+
+                        <article class="cancel-info-card">
+                            <span class="cancel-info-label">
+                                Travel date
+                            </span>
+
+                            <span class="cancel-info-value">
+                                {% if booking.trip.date %}
+                                    {{ booking.trip.date|date:"M d, Y" }}
+                                {% else %}
+                                    Not specified
+                                {% endif %}
+                            </span>
+                        </article>
+
+                        <article class="cancel-info-card">
+                            <span class="cancel-info-label">
+                                Departure time
+                            </span>
+
+                            <span class="cancel-info-value">
+                                {% if booking.trip.time %}
+                                    {{ booking.trip.time|time:"g:i A" }}
+                                {% else %}
+                                    Not specified
+                                {% endif %}
+                            </span>
+                        </article>
+
+                        <article class="cancel-info-card">
+                            <span class="cancel-info-label">
+                                Seats booked
+                            </span>
+
+                            <span class="cancel-info-value">
+                                {{ booking.seats_booked }}
+                                seat{{ booking.seats_booked|pluralize }}
+                            </span>
+                        </article>
+
+                        <article class="cancel-info-card">
+                            <span class="cancel-info-label">
+                                Current booking total
+                            </span>
+
+                            <span class="cancel-info-value">
+                                $
+                                <span id="currentBookingTotal">
+                                    0.00
+                                </span>
+                            </span>
+                        </article>
+
+                    </div>
+
+                    <div class="cancel-driver">
+
+                        <span class="cancel-driver-avatar">
+                            {{ booking.trip.driver.username|slice:":1"|upper }}
+                        </span>
+
+                        <span>
+                            Driver:
+                            <strong>
+                                {{ booking.trip.driver.username }}
+                            </strong>
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- Cancellation form -->
+
+            <section class="cancel-form-card">
+
+                <div class="cancel-warning-icon">
+                    !
+                </div>
+
+                <h2 class="cancel-title">
+                    Cancel your booking
+                </h2>
+
+                <p class="cancel-description">
+                    Choose how many seats you want to cancel. Cancelling all
+                    seats will remove this reservation completely.
+                </p>
+
+                <form
+                    method="post"
+                    id="cancelBookingForm"
+                    onsubmit="return confirmCancellation();"
+                >
+                    {% csrf_token %}
+
+                    <div class="cancel-field">
+
+                        <label for="cancelSeats">
+                            Seats to cancel
+                        </label>
+
+                        <div class="cancel-input-wrap">
+
+                            <input
+                                id="cancelSeats"
+                                type="number"
+                                name="seats"
+                                min="1"
+                                max="{{ booking.seats_booked }}"
+                                value="1"
+                                required
+                            >
+
+                            <span class="cancel-input-suffix">
+                                max {{ booking.seats_booked }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="cancel-preview">
+
+                        <div class="cancel-preview-row">
+                            <span>Seats currently booked</span>
+
+                            <strong>
+                                {{ booking.seats_booked }}
+                            </strong>
+                        </div>
+
+                        <div class="cancel-preview-row">
+                            <span>Seats being cancelled</span>
+
+                            <strong id="cancelledSeatsPreview">
+                                1
+                            </strong>
+                        </div>
+
+                        <div class="cancel-preview-row">
+                            <span>Seats remaining after cancellation</span>
+
+                            <strong id="remainingSeatsPreview">
+                                {{ booking.seats_booked|add:"-1" }}
+                            </strong>
+                        </div>
+
+                        <div class="cancel-preview-row">
+                            <span>Refund estimate</span>
+
+                            <strong>
+                                $<span id="refundPreview">0.00</span>
+                            </strong>
+                        </div>
+
+                    </div>
+
+                    <div class="cancel-result" id="cancelResult">
+                        One seat will be removed from this booking.
+                    </div>
+
+                    <div class="cancel-actions">
+
+                        <button
+                            type="submit"
+                            class="btn cancel-confirm-button"
+                        >
+                            Confirm cancellation
+                        </button>
+
+                        <a
+                            href="{% url 'my_bookings' %}"
+                            class="btn btn-light cancel-back-button"
+                        >
+                            Keep my booking
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </section>
+
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const seatInput =
+            document.getElementById("cancelSeats");
+
+        const cancelledSeatsPreview =
+            document.getElementById(
+                "cancelledSeatsPreview"
+            );
+
+        const remainingSeatsPreview =
+            document.getElementById(
+                "remainingSeatsPreview"
+            );
+
+        const refundPreview =
+            document.getElementById(
+                "refundPreview"
+            );
+
+        const currentBookingTotal =
+            document.getElementById(
+                "currentBookingTotal"
+            );
+
+        const cancelResult =
+            document.getElementById(
+                "cancelResult"
+            );
+
+        const cancelForm =
+            document.getElementById(
+                "cancelBookingForm"
+            );
+
+        if (!seatInput) {
+            return;
+        }
+
+        const seatsBooked = Number(
+            "{{ booking.seats_booked }}"
+        );
+
+        const pricePerSeat = Number(
+            "{{ booking.trip.price_per_seat }}"
+        );
+
+        currentBookingTotal.textContent = (
+            seatsBooked * pricePerSeat
+        ).toFixed(2);
+
+        function getSafeCancelCount() {
+            const typedValue =
+                Number(seatInput.value);
+
+            if (
+                seatInput.value === "" ||
+                !Number.isFinite(typedValue)
+            ) {
+                return 1;
+            }
+
+            return Math.min(
+                Math.max(typedValue, 1),
+                seatsBooked
+            );
+        }
+
+        function updateCancellationPreview() {
+            const seatsToCancel =
+                getSafeCancelCount();
+
+            const remainingSeats =
+                seatsBooked - seatsToCancel;
+
+            const refund =
+                seatsToCancel * pricePerSeat;
+
+            cancelledSeatsPreview.textContent =
+                seatsToCancel;
+
+            remainingSeatsPreview.textContent =
+                remainingSeats;
+
+            refundPreview.textContent =
+                refund.toFixed(2);
+
+            if (remainingSeats === 0) {
+                cancelResult.textContent =
+                    "This will fully cancel and remove your booking.";
+            } else {
+                cancelResult.textContent =
+                    remainingSeats +
+                    " seat(s) will remain in your booking.";
+            }
+        }
+
+        function correctCancelInput() {
+            seatInput.value =
+                getSafeCancelCount();
+
+            updateCancellationPreview();
+        }
+
+        /*
+         * Do not change the input while typing.
+         */
+        seatInput.addEventListener(
+            "input",
+            updateCancellationPreview
+        );
+
+        seatInput.addEventListener(
+            "change",
+            correctCancelInput
+        );
+
+        seatInput.addEventListener(
+            "blur",
+            correctCancelInput
+        );
+
+        if (cancelForm) {
+            cancelForm.addEventListener(
+                "submit",
+                function () {
+                    correctCancelInput();
+                }
+            );
+        }
+
+        updateCancellationPreview();
+    });
+
+    function confirmCancellation() {
+        const seatInput =
+            document.getElementById(
+                "cancelSeats"
+            );
+
+        const seatsToCancel =
+            Number(seatInput.value);
+
+        const seatsBooked =
+            Number("{{ booking.seats_booked }}");
+
+        if (seatsToCancel >= seatsBooked) {
+            return window.confirm(
+                "This will fully cancel your booking. Continue?"
+            );
+        }
+
+        return window.confirm(
+            "Cancel " +
+            seatsToCancel +
+            " seat(s) from this booking?"
+        );
+    }
+</script>
+
+
+{% endblock %}

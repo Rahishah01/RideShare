@@ -1,0 +1,637 @@
+{% extends "base.html" %}
+
+{% block title %}My Bookings | RideShare{% endblock %}
+
+{% block extra_css %}
+
+/* =========================
+   My bookings page
+========================= */
+
+.bookings-page {
+    padding: 58px 0 100px;
+}
+
+.bookings-container {
+    width: min(1180px, calc(100% - 40px));
+    margin: 0 auto;
+}
+
+/* Header */
+
+.bookings-header {
+    margin-bottom: 36px;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.bookings-eyebrow {
+    width: fit-content;
+    margin-bottom: 14px;
+    padding: 8px 13px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    border-radius: 999px;
+    background: rgba(173, 243, 63, 0.25);
+    color: var(--dark);
+
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.bookings-title {
+    margin: 0;
+
+    font-size: clamp(2.7rem, 5vw, 4.6rem);
+    line-height: 1;
+    letter-spacing: -0.055em;
+}
+
+.bookings-description {
+    margin: 17px 0 0;
+
+    color: var(--muted);
+    line-height: 1.7;
+}
+
+/* Stats */
+
+.bookings-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 42px;
+}
+
+.booking-stat-card {
+    min-height: 150px;
+    padding: 24px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    border: 1px solid rgba(0, 0, 0, 0.045);
+    border-radius: 24px;
+    background: #ffffff;
+    box-shadow: 0 10px 30px rgba(25, 37, 31, 0.055);
+}
+
+.booking-stat-card.dark {
+    background: var(--dark);
+    color: #ffffff;
+}
+
+.booking-stat-card.accent {
+    background: var(--accent);
+    color: var(--dark);
+}
+
+.booking-stat-icon {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+    background: #f0f1ec;
+
+    font-size: 1.05rem;
+}
+
+.booking-stat-card.dark .booking-stat-icon {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.booking-stat-card.accent .booking-stat-icon {
+    background: rgba(255, 255, 255, 0.35);
+}
+
+.booking-stat-label {
+    margin: 20px 0 6px;
+
+    color: #7d837d;
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+}
+
+.booking-stat-card.dark .booking-stat-label {
+    color: rgba(255, 255, 255, 0.65);
+}
+
+.booking-stat-card.accent .booking-stat-label {
+    color: rgba(32, 61, 49, 0.68);
+}
+
+.booking-stat-value {
+    margin: 0;
+
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+}
+
+/* Section header */
+
+.bookings-section-header {
+    margin-bottom: 21px;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.bookings-section-title {
+    margin: 0;
+    font-size: 1.7rem;
+    letter-spacing: -0.03em;
+}
+
+.bookings-section-text {
+    margin: 7px 0 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+/* Booking cards */
+
+.bookings-list {
+    display: grid;
+    gap: 17px;
+}
+
+.booking-item-card {
+    overflow: hidden;
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+
+    border: 1px solid rgba(0, 0, 0, 0.045);
+    border-radius: 25px;
+    background: #ffffff;
+    box-shadow: 0 12px 32px rgba(25, 37, 31, 0.06);
+}
+
+.booking-item-main {
+    padding: 26px;
+}
+
+.booking-item-label {
+    margin: 0 0 8px;
+
+    color: #818781;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.booking-route {
+    margin: 0;
+
+    font-size: clamp(1.35rem, 2.5vw, 1.85rem);
+    letter-spacing: -0.035em;
+}
+
+.booking-route-arrow {
+    margin: 0 8px;
+    color: #9a9f9a;
+}
+
+.booking-meta {
+    margin-top: 18px;
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+}
+
+.booking-chip {
+    padding: 8px 12px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    border-radius: 999px;
+    background: #f0f0eb;
+    color: #444a45;
+
+    font-size: 0.79rem;
+    font-weight: 600;
+}
+
+.booking-driver {
+    margin-top: 17px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    color: var(--muted);
+    font-size: 0.82rem;
+}
+
+.booking-driver-avatar {
+    width: 32px;
+    height: 32px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+    background: var(--dark);
+    color: #ffffff;
+
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.booking-item-side {
+    min-width: 250px;
+    padding: 26px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+
+    background: #f7f7f3;
+}
+
+.booking-total-label {
+    margin: 0 0 5px;
+
+    color: #808680;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+}
+
+.booking-total {
+    margin: 0;
+
+    color: var(--dark);
+    font-size: 1.7rem;
+    font-weight: 800;
+}
+
+.booking-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.booking-actions .btn {
+    min-height: 42px;
+    padding: 11px 16px;
+    font-size: 0.83rem;
+}
+
+/* Empty state */
+
+.empty-bookings-card {
+    padding: 70px 28px;
+
+    border: 1px dashed #d2d4cd;
+    border-radius: 28px;
+    background: rgba(255, 255, 255, 0.7);
+    text-align: center;
+}
+
+.empty-bookings-icon {
+    width: 68px;
+    height: 68px;
+    margin: 0 auto 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 21px;
+    background: var(--accent);
+
+    font-size: 1.7rem;
+}
+
+.empty-bookings-card h2 {
+    margin: 0;
+    font-size: 1.45rem;
+}
+
+.empty-bookings-card p {
+    max-width: 470px;
+    margin: 13px auto 0;
+
+    color: var(--muted);
+    line-height: 1.65;
+}
+
+.empty-bookings-card .btn {
+    margin-top: 24px;
+}
+
+/* Responsive */
+
+@media (max-width: 850px) {
+    .bookings-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .bookings-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .booking-item-card {
+        grid-template-columns: 1fr;
+    }
+
+    .booking-item-side {
+        min-width: 0;
+        align-items: flex-start;
+        gap: 22px;
+    }
+
+    .booking-actions {
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 580px) {
+    .bookings-page {
+        padding-top: 36px;
+    }
+
+    .bookings-container {
+        width: min(100% - 24px, 1180px);
+    }
+
+    .bookings-section-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .booking-item-main,
+    .booking-item-side {
+        padding: 21px;
+    }
+
+    .booking-actions {
+        width: 100%;
+    }
+
+    .booking-actions .btn {
+        width: 100%;
+    }
+}
+
+{% endblock %}
+
+{% block content %}
+
+<div class="bookings-page">
+    <div class="bookings-container">
+
+        <section class="bookings-header">
+
+            <div>
+                <div class="bookings-eyebrow">
+                    <span>🎟️</span>
+                    Passenger bookings
+                </div>
+
+                <h1 class="bookings-title">
+                    My bookings
+                </h1>
+
+                <p class="bookings-description">
+                    View your reserved rides and manage your upcoming trips.
+                </p>
+            </div>
+
+            <a href="{% url 'find_rides' %}" class="btn btn-accent">
+                Find another ride
+                <span aria-hidden="true">→</span>
+            </a>
+
+        </section>
+
+        <section class="bookings-stats">
+
+            <article class="booking-stat-card dark">
+                <span class="booking-stat-icon">📋</span>
+
+                <div>
+                    <p class="booking-stat-label">
+                        Total bookings
+                    </p>
+
+                    <p class="booking-stat-value">
+                        {{ bookings|length }}
+                    </p>
+                </div>
+            </article>
+
+            <article class="booking-stat-card accent">
+                <span class="booking-stat-icon">🚗</span>
+
+                <div>
+                    <p class="booking-stat-label">
+                        Reserved rides
+                    </p>
+
+                    <p class="booking-stat-value">
+                        {{ bookings|length }}
+                    </p>
+                </div>
+            </article>
+
+            <article class="booking-stat-card">
+                <span class="booking-stat-icon">💺</span>
+
+                <div>
+                    <p class="booking-stat-label">
+                        Seats reserved
+                    </p>
+
+                    <p class="booking-stat-value">
+                        {{ total_seats_reserved|default:0 }}
+                    </p>
+                </div>
+            </article>
+
+        </section>
+
+        <section>
+
+            <div class="bookings-section-header">
+
+                <div>
+                    <h2 class="bookings-section-title">
+                        My reservations
+                    </h2>
+
+                    <p class="bookings-section-text">
+                        {{ bookings|length }}
+                        booking{{ bookings|length|pluralize }}
+                        currently saved.
+                    </p>
+                </div>
+
+            </div>
+
+            {% if bookings %}
+
+                <div class="bookings-list">
+
+                    {% for booking in bookings %}
+
+                        <article class="booking-item-card">
+
+                            <div class="booking-item-main">
+
+                                <p class="booking-item-label">
+                                    Reserved route
+                                </p>
+
+                                <h3 class="booking-route">
+                                    {{ booking.trip.start_location }}
+
+                                    <span class="booking-route-arrow">
+                                        →
+                                    </span>
+
+                                    {{ booking.trip.end_location }}
+                                </h3>
+
+                                <div class="booking-meta">
+
+                                    <span class="booking-chip">
+                                        📅
+
+                                        {% if booking.trip.date %}
+                                            {{ booking.trip.date|date:"M d, Y" }}
+                                        {% else %}
+                                            Date not specified
+                                        {% endif %}
+                                    </span>
+
+                                    <span class="booking-chip">
+                                        🕐
+
+                                        {% if booking.trip.time %}
+                                            {{ booking.trip.time|time:"g:i A" }}
+                                        {% else %}
+                                            Time not specified
+                                        {% endif %}
+                                    </span>
+
+                                    <span class="booking-chip">
+                                        💺
+                                        {{ booking.seats_booked }}
+                                        seat{{ booking.seats_booked|pluralize }}
+                                        booked
+                                    </span>
+
+                                </div>
+
+                                <div class="booking-driver">
+
+                                    <span class="booking-driver-avatar">
+                                        {{ booking.trip.driver.username|slice:":1"|upper }}
+                                    </span>
+
+                                    <span>
+                                        Driver:
+                                        <strong>
+                                            {{ booking.trip.driver.username }}
+                                        </strong>
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                            <div class="booking-item-side">
+
+                                <div>
+                                    <p class="booking-total-label">
+                                        Booking total
+                                    </p>
+
+                                    <p class="booking-total">
+                                        $
+                                        {% widthratio booking.seats_booked 1 booking.trip.price_per_seat %}
+                                    </p>
+                                </div>
+
+                                <div class="booking-actions">
+
+                                    <a
+                                        href="{% url 'trip_detail' booking.trip.id %}"
+                                        class="btn btn-dark"
+                                    >
+                                        View ride
+                                    </a>
+
+                                    <a
+                                        href="{% url 'cancel_booking' booking.id %}"
+                                        class="btn btn-light"
+                                    >
+                                        Cancel booking
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </article>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="empty-bookings-card">
+
+                    <div class="empty-bookings-icon">
+                        📅
+                    </div>
+
+                    <h2>No bookings yet</h2>
+
+                    <p>
+                        You have not reserved a ride yet. Browse available
+                        rides and choose a journey that matches your plans.
+                    </p>
+
+                    <a href="{% url 'find_rides' %}" class="btn btn-dark">
+                        Find a ride
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </section>
+
+    </div>
+</div>
+
+{% endblock %}

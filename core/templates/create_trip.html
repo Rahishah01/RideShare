@@ -1,0 +1,812 @@
+{% extends "base.html" %}
+
+{% block title %}Offer a Ride | RideShare{% endblock %}
+
+{% block extra_css %}
+
+/* =========================
+   Create ride page
+========================= */
+
+.create-ride-page {
+    padding: 58px 0 100px;
+}
+
+.create-ride-container {
+    width: min(1180px, calc(100% - 40px));
+    margin: 0 auto;
+}
+
+/* Header */
+
+.create-ride-header {
+    max-width: 760px;
+    margin: 0 auto 46px;
+    text-align: center;
+}
+
+.create-ride-eyebrow {
+    width: fit-content;
+    margin: 0 auto 17px;
+    padding: 9px 15px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    border-radius: 999px;
+    background: rgba(173, 243, 63, 0.25);
+    color: var(--dark);
+
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.create-ride-title {
+    margin: 0;
+
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    line-height: 1;
+    letter-spacing: -0.055em;
+}
+
+.create-ride-description {
+    max-width: 620px;
+    margin: 20px auto 0;
+
+    color: var(--muted);
+    font-size: 1.02rem;
+    line-height: 1.7;
+}
+
+/* Main layout */
+
+.create-ride-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(310px, 0.85fr);
+    align-items: start;
+    gap: 24px;
+}
+
+/* Form card */
+
+.create-ride-form-card {
+    padding: 32px;
+
+    border: 1px solid rgba(0, 0, 0, 0.045);
+    border-radius: 28px;
+    background: #ffffff;
+    box-shadow: 0 20px 50px rgba(28, 45, 36, 0.09);
+}
+
+.form-section-title {
+    margin: 0 0 8px;
+    font-size: 1.35rem;
+    letter-spacing: -0.025em;
+}
+
+.form-section-description {
+    margin: 0 0 28px;
+    color: var(--muted);
+    font-size: 0.86rem;
+    line-height: 1.6;
+}
+
+.create-ride-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 21px;
+}
+
+.create-field {
+    min-width: 0;
+}
+
+.create-field.full-width {
+    grid-column: 1 / -1;
+}
+
+.create-field label {
+    display: block;
+    margin: 0 0 9px 3px;
+
+    color: #4f5650;
+    font-size: 0.76rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.065em;
+}
+
+.create-input-wrap {
+    position: relative;
+}
+
+.create-input-icon {
+    position: absolute;
+    top: 50%;
+    left: 16px;
+    transform: translateY(-50%);
+
+    color: #777e78;
+    pointer-events: none;
+}
+
+.create-field input,
+.create-field select,
+.create-field textarea {
+    min-height: 55px;
+    padding: 14px 16px 14px 46px;
+
+    border: 1px solid #dbdcd6;
+    border-radius: 16px;
+    background: #fafaf8;
+
+    font-size: 0.94rem;
+}
+
+.create-field input:focus,
+.create-field select:focus,
+.create-field textarea:focus {
+    border-color: var(--dark);
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(32, 61, 49, 0.09);
+}
+
+.create-field-error {
+    margin: 8px 0 0;
+    padding: 10px 12px;
+
+    border-left: 3px solid #dc4c4c;
+    border-radius: 9px;
+    background: #fbeaea;
+    color: #8b3434;
+
+    font-size: 0.78rem;
+    line-height: 1.45;
+}
+
+.create-field-error ul {
+    margin: 0;
+    padding-left: 17px;
+}
+
+.create-form-errors {
+    margin-bottom: 22px;
+    padding: 14px 16px;
+
+    border-left: 4px solid #dc4c4c;
+    border-radius: 12px;
+    background: #fbeaea;
+    color: #8b3434;
+
+    font-size: 0.84rem;
+    line-height: 1.55;
+}
+
+.create-ride-actions {
+    margin-top: 30px;
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: 11px;
+}
+
+.publish-button {
+    min-width: 190px;
+}
+
+/* Sidebar */
+
+.create-sidebar {
+    display: grid;
+    gap: 18px;
+}
+
+.earnings-card {
+    padding: 27px;
+
+    border-radius: 26px;
+    background: var(--dark);
+    color: #ffffff;
+    box-shadow: 0 20px 45px rgba(27, 49, 39, 0.18);
+}
+
+.earnings-card-label {
+    margin: 0 0 17px;
+
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.earnings-value {
+    margin: 0;
+
+    color: var(--accent);
+    font-size: 2.75rem;
+    font-weight: 800;
+    letter-spacing: -0.055em;
+}
+
+.earnings-description {
+    margin: 13px 0 0;
+
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.82rem;
+    line-height: 1.6;
+}
+
+.earnings-breakdown {
+    margin-top: 22px;
+    padding-top: 18px;
+
+    display: grid;
+    gap: 11px;
+
+    border-top: 1px solid rgba(255, 255, 255, 0.13);
+}
+
+.earnings-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.8rem;
+}
+
+.earnings-row strong {
+    color: #ffffff;
+}
+
+/* Benefits card */
+
+.offer-benefits-card {
+    padding: 25px;
+
+    border: 1px solid #e5e6df;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.76);
+}
+
+.offer-benefits-title {
+    margin: 0 0 18px;
+    font-size: 1.08rem;
+}
+
+.offer-benefits-list {
+    margin: 0;
+    padding: 0;
+
+    display: grid;
+    gap: 16px;
+
+    list-style: none;
+}
+
+.offer-benefit {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+}
+
+.offer-benefit-icon {
+    width: 31px;
+    height: 31px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+    background: var(--accent);
+    color: var(--dark);
+
+    font-size: 0.82rem;
+}
+
+.offer-benefit strong {
+    display: block;
+    margin-bottom: 3px;
+    font-size: 0.87rem;
+}
+
+.offer-benefit p {
+    margin: 0;
+
+    color: var(--muted);
+    font-size: 0.77rem;
+    line-height: 1.5;
+}
+
+/* Safety card */
+
+.safety-card {
+    padding: 20px;
+
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+
+    border-radius: 20px;
+    background: rgba(173, 243, 63, 0.22);
+    color: var(--dark);
+}
+
+.safety-card-icon {
+    font-size: 1.1rem;
+}
+
+.safety-card strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 0.85rem;
+}
+
+.safety-card p {
+    margin: 0;
+
+    color: rgba(32, 61, 49, 0.72);
+    font-size: 0.76rem;
+    line-height: 1.5;
+}
+
+/* Responsive */
+
+@media (max-width: 900px) {
+    .create-ride-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .create-sidebar {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .safety-card {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 650px) {
+    .create-ride-page {
+        padding-top: 36px;
+    }
+
+    .create-ride-container {
+        width: min(100% - 24px, 1180px);
+    }
+
+    .create-ride-form-card {
+        padding: 23px;
+    }
+
+    .create-ride-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .create-field.full-width {
+        grid-column: auto;
+    }
+
+    .create-sidebar {
+        grid-template-columns: 1fr;
+    }
+
+    .safety-card {
+        grid-column: auto;
+    }
+
+    .create-ride-actions {
+        flex-direction: column;
+    }
+
+    .create-ride-actions .btn {
+        width: 100%;
+    }
+}
+
+{% endblock %}
+
+{% block content %}
+
+<div class="create-ride-page">
+    <div class="create-ride-container">
+
+        <!-- Page heading -->
+
+        <section class="create-ride-header">
+
+            <div class="create-ride-eyebrow">
+                <span>🚗</span>
+                Become a RideShare driver
+            </div>
+
+            <h1 class="create-ride-title">
+                Offer a ride
+            </h1>
+
+            <p class="create-ride-description">
+                Publish your upcoming journey, share your available seats,
+                and split the cost with passengers traveling your way.
+            </p>
+
+        </section>
+
+        <div class="create-ride-layout">
+
+            <!-- Form -->
+
+            <section class="create-ride-form-card">
+
+                <h2 class="form-section-title">
+                    Ride information
+                </h2>
+
+                <p class="form-section-description">
+                    Add your route, departure details, available seats, and
+                    preferred contribution per passenger.
+                </p>
+
+                <form method="post" id="createRideForm">
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                        <div class="create-form-errors">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+
+                    <div class="create-ride-form-grid">
+
+                        <!-- Start location -->
+
+                        <div class="create-field">
+                            <label for="{{ form.start_location.id_for_label }}">
+                                {{ form.start_location.label }}
+                            </label>
+
+                            <div class="create-input-wrap">
+                                <span class="create-input-icon">●</span>
+
+                                {{ form.start_location }}
+                            </div>
+
+                            {% if form.start_location.errors %}
+                                <div class="create-field-error">
+                                    {{ form.start_location.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- End location -->
+
+                        <div class="create-field">
+                            <label for="{{ form.end_location.id_for_label }}">
+                                {{ form.end_location.label }}
+                            </label>
+
+                            <div class="create-input-wrap">
+                                <span class="create-input-icon">◆</span>
+
+                                {{ form.end_location }}
+                            </div>
+
+                            {% if form.end_location.errors %}
+                                <div class="create-field-error">
+                                    {{ form.end_location.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Date -->
+
+                        <div class="create-field">
+                            <label for="{{ form.date.id_for_label }}">
+                                {{ form.date.label }}
+                            </label>
+
+                            <div class="create-input-wrap">
+                                <span class="create-input-icon">▣</span>
+
+                                {{ form.date }}
+                            </div>
+
+                            {% if form.date.errors %}
+                                <div class="create-field-error">
+                                    {{ form.date.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Time -->
+
+                        <div class="create-field">
+                            <label for="{{ form.time.id_for_label }}">
+                                {{ form.time.label }}
+                            </label>
+
+                            <div class="create-input-wrap">
+                                <span class="create-input-icon">◷</span>
+
+                                {{ form.time }}
+                            </div>
+
+                            {% if form.time.errors %}
+                                <div class="create-field-error">
+                                    {{ form.time.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Seats -->
+
+                        <div class="create-field">
+                            <label for="{{ form.seats_available.id_for_label }}">
+                                {{ form.seats_available.label }}
+                            </label>
+
+                            <div class="create-input-wrap">
+                                <span class="create-input-icon">♟</span>
+
+                                {{ form.seats_available }}
+                            </div>
+
+                            {% if form.seats_available.errors %}
+                                <div class="create-field-error">
+                                    {{ form.seats_available.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Price -->
+
+                        <div class="create-field">
+                            <label for="{{ form.price_per_seat.id_for_label }}">
+                                {{ form.price_per_seat.label }}
+                            </label>
+
+                            <div class="create-input-wrap">
+                                <span class="create-input-icon">$</span>
+
+                                {{ form.price_per_seat }}
+                            </div>
+
+                            {% if form.price_per_seat.errors %}
+                                <div class="create-field-error">
+                                    {{ form.price_per_seat.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                    </div>
+
+                    <div class="create-ride-actions">
+
+                        <button
+                            type="submit"
+                            class="btn btn-dark publish-button"
+                        >
+                            Publish ride
+                            <span aria-hidden="true">→</span>
+                        </button>
+
+                        <a href="{% url 'dashboard' %}" class="btn btn-light">
+                            Cancel
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </section>
+
+            <!-- Sidebar -->
+
+            <aside class="create-sidebar">
+
+                <section class="earnings-card">
+
+                    <p class="earnings-card-label">
+                        Potential earnings
+                    </p>
+
+                    <p class="earnings-value">
+                        $<span id="potentialEarnings">0.00</span>
+                    </p>
+
+                    <p class="earnings-description">
+                        Estimated total before RideShare’s 10% platform
+                        commission.
+                    </p>
+
+                    <div class="earnings-breakdown">
+
+                        <div class="earnings-row">
+                            <span>Available seats</span>
+
+                            <strong id="earningsSeats">
+                                0
+                            </strong>
+                        </div>
+
+                        <div class="earnings-row">
+                            <span>Price per seat</span>
+
+                            <strong>
+                                $<span id="earningsPrice">0.00</span>
+                            </strong>
+                        </div>
+
+                        <div class="earnings-row">
+                            <span>Estimated after commission</span>
+
+                            <strong>
+                                $<span id="driverEarnings">0.00</span>
+                            </strong>
+                        </div>
+
+                    </div>
+
+                </section>
+
+                <section class="offer-benefits-card">
+
+                    <h2 class="offer-benefits-title">
+                        Why offer a ride?
+                    </h2>
+
+                    <ul class="offer-benefits-list">
+
+                        <li class="offer-benefit">
+                            <span class="offer-benefit-icon">💵</span>
+
+                            <div>
+                                <strong>Share your costs</strong>
+
+                                <p>
+                                    Passengers help contribute toward fuel and
+                                    travel expenses.
+                                </p>
+                            </div>
+                        </li>
+
+                        <li class="offer-benefit">
+                            <span class="offer-benefit-icon">🌿</span>
+
+                            <div>
+                                <strong>Reduce emissions</strong>
+
+                                <p>
+                                    More passengers in one vehicle means fewer
+                                    cars on the road.
+                                </p>
+                            </div>
+                        </li>
+
+                        <li class="offer-benefit">
+                            <span class="offer-benefit-icon">👥</span>
+
+                            <div>
+                                <strong>Meet travelers</strong>
+
+                                <p>
+                                    Connect with people heading in the same
+                                    direction.
+                                </p>
+                            </div>
+                        </li>
+
+                    </ul>
+
+                </section>
+
+                <section class="safety-card">
+
+                    <span class="safety-card-icon">🛡️</span>
+
+                    <div>
+                        <strong>Publish accurate information</strong>
+
+                        <p>
+                            Make sure the route, date, time, available seats,
+                            and price are correct before publishing.
+                        </p>
+                    </div>
+
+                </section>
+
+            </aside>
+
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const seatsInput =
+            document.getElementById("id_seats_available");
+
+        const priceInput =
+            document.getElementById("id_price_per_seat");
+
+        const potentialEarnings =
+            document.getElementById("potentialEarnings");
+
+        const earningsSeats =
+            document.getElementById("earningsSeats");
+
+        const earningsPrice =
+            document.getElementById("earningsPrice");
+
+        const driverEarnings =
+            document.getElementById("driverEarnings");
+
+        const dateInput =
+            document.getElementById("id_date");
+
+        if (dateInput) {
+            const today = new Date();
+
+            const year = today.getFullYear();
+
+            const month = String(
+                today.getMonth() + 1
+            ).padStart(2, "0");
+
+            const day = String(
+                today.getDate()
+            ).padStart(2, "0");
+
+            dateInput.min =
+                year + "-" + month + "-" + day;
+        }
+
+        function updateEarnings() {
+            const seats = Math.max(
+                Number(seatsInput?.value) || 0,
+                0
+            );
+
+            const price = Math.max(
+                Number(priceInput?.value) || 0,
+                0
+            );
+
+            const grossEarnings = seats * price;
+            const netEarnings = grossEarnings * 0.9;
+
+            earningsSeats.textContent = seats;
+            earningsPrice.textContent = price.toFixed(2);
+
+            potentialEarnings.textContent =
+                grossEarnings.toFixed(2);
+
+            driverEarnings.textContent =
+                netEarnings.toFixed(2);
+        }
+
+        if (seatsInput && priceInput) {
+            seatsInput.addEventListener(
+                "input",
+                updateEarnings
+            );
+
+            priceInput.addEventListener(
+                "input",
+                updateEarnings
+            );
+
+            updateEarnings();
+        }
+    });
+</script>
+
+{% endblock %}

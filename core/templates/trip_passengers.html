@@ -1,0 +1,610 @@
+{% extends "base.html" %}
+
+{% block title %}Ride Passengers | RideShare{% endblock %}
+
+{% block extra_css %}
+
+/* =========================
+   Trip passengers page
+========================= */
+
+.passengers-page {
+    padding: 58px 0 100px;
+}
+
+.passengers-container {
+    width: min(1120px, calc(100% - 40px));
+    margin: 0 auto;
+}
+
+.passengers-back {
+    width: fit-content;
+    margin-bottom: 22px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    color: var(--dark);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.passengers-back:hover {
+    text-decoration: underline;
+}
+
+/* Header */
+
+.passengers-hero {
+    padding: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+
+    border-radius: 30px;
+    background: var(--dark);
+    color: #ffffff;
+    box-shadow: 0 22px 55px rgba(29, 49, 39, 0.16);
+}
+
+.passengers-eyebrow {
+    margin: 0 0 10px;
+
+    color: var(--accent);
+    font-size: 0.74rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+}
+
+.passengers-route {
+    margin: 0;
+
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    line-height: 1;
+    letter-spacing: -0.045em;
+}
+
+.passengers-route-arrow {
+    margin: 0 10px;
+    color: var(--accent);
+}
+
+.passengers-date {
+    margin: 14px 0 0;
+
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.88rem;
+}
+
+.passengers-price-box {
+    min-width: 155px;
+    padding: 17px;
+
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.08);
+    text-align: right;
+}
+
+.passengers-price-label {
+    display: block;
+    margin-bottom: 5px;
+
+    color: rgba(255, 255, 255, 0.58);
+    font-size: 0.69rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+}
+
+.passengers-price {
+    font-size: 1.75rem;
+    font-weight: 800;
+}
+
+/* Stats */
+
+.passengers-stats {
+    margin-top: 22px;
+
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 15px;
+}
+
+.passenger-stat-card {
+    min-height: 145px;
+    padding: 22px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    border: 1px solid rgba(0, 0, 0, 0.045);
+    border-radius: 22px;
+    background: #ffffff;
+    box-shadow: 0 10px 28px rgba(25, 37, 31, 0.055);
+}
+
+.passenger-stat-card.accent {
+    background: var(--accent);
+}
+
+.passenger-stat-card.dark {
+    background: var(--dark);
+    color: #ffffff;
+}
+
+.passenger-stat-icon {
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 13px;
+    background: #f0f1ec;
+
+    font-size: 1rem;
+}
+
+.passenger-stat-card.accent .passenger-stat-icon {
+    background: rgba(255, 255, 255, 0.38);
+}
+
+.passenger-stat-card.dark .passenger-stat-icon {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.passenger-stat-label {
+    margin: 18px 0 5px;
+
+    color: #7d837d;
+    font-size: 0.69rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+}
+
+.passenger-stat-card.accent .passenger-stat-label {
+    color: rgba(32, 61, 49, 0.67);
+}
+
+.passenger-stat-card.dark .passenger-stat-label {
+    color: rgba(255, 255, 255, 0.63);
+}
+
+.passenger-stat-value {
+    margin: 0;
+
+    font-size: 1.8rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+}
+
+/* List */
+
+.passengers-section {
+    margin-top: 58px;
+}
+
+.passengers-section-header {
+    margin-bottom: 21px;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.passengers-section-title {
+    margin: 0;
+
+    font-size: 1.7rem;
+    letter-spacing: -0.03em;
+}
+
+.passengers-section-text {
+    margin: 7px 0 0;
+
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.passengers-list {
+    display: grid;
+    gap: 16px;
+}
+
+.passenger-card {
+    padding: 24px;
+
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 18px;
+
+    border: 1px solid rgba(0, 0, 0, 0.045);
+    border-radius: 22px;
+    background: #ffffff;
+    box-shadow: 0 10px 28px rgba(25, 37, 31, 0.055);
+}
+
+.passenger-avatar {
+    width: 52px;
+    height: 52px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 17px;
+    background: var(--dark);
+    color: #ffffff;
+
+    font-size: 1.1rem;
+    font-weight: 800;
+}
+
+.passenger-name {
+    margin: 0;
+
+    font-size: 1.08rem;
+}
+
+.passenger-email {
+    margin: 5px 0 0;
+
+    color: var(--muted);
+    font-size: 0.8rem;
+}
+
+.passenger-meta {
+    margin-top: 12px;
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.passenger-chip {
+    padding: 7px 11px;
+
+    border-radius: 999px;
+    background: #f0f0eb;
+    color: #444a45;
+
+    font-size: 0.76rem;
+    font-weight: 600;
+}
+
+.passenger-value {
+    min-width: 140px;
+    text-align: right;
+}
+
+.passenger-value-label {
+    display: block;
+    margin-bottom: 4px;
+
+    color: #818781;
+    font-size: 0.69rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+}
+
+.passenger-value-amount {
+    color: var(--dark);
+    font-size: 1.35rem;
+    font-weight: 800;
+}
+
+/* Empty state */
+
+.passengers-empty {
+    padding: 66px 25px;
+
+    border: 1px dashed #d3d5ce;
+    border-radius: 26px;
+    background: rgba(255, 255, 255, 0.68);
+    text-align: center;
+}
+
+.passengers-empty-icon {
+    width: 66px;
+    height: 66px;
+    margin: 0 auto 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 20px;
+    background: var(--accent);
+
+    font-size: 1.65rem;
+}
+
+.passengers-empty h2 {
+    margin: 0;
+    font-size: 1.4rem;
+}
+
+.passengers-empty p {
+    max-width: 470px;
+    margin: 12px auto 0;
+
+    color: var(--muted);
+    line-height: 1.65;
+}
+
+/* Responsive */
+
+@media (max-width: 900px) {
+    .passengers-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 680px) {
+    .passengers-page {
+        padding-top: 36px;
+    }
+
+    .passengers-container {
+        width: min(100% - 24px, 1120px);
+    }
+
+    .passengers-hero {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .passengers-price-box {
+        width: 100%;
+        text-align: left;
+    }
+
+    .passengers-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .passenger-card {
+        grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .passenger-value {
+        grid-column: 1 / -1;
+        width: 100%;
+        padding-top: 15px;
+
+        border-top: 1px solid #ecece7;
+        text-align: left;
+    }
+}
+
+{% endblock %}
+
+{% block content %}
+
+<div class="passengers-page">
+    <div class="passengers-container">
+
+        <a href="{% url 'dashboard' %}" class="passengers-back">
+            <span aria-hidden="true">←</span>
+            Back to dashboard
+        </a>
+
+        <section class="passengers-hero">
+
+            <div>
+                <p class="passengers-eyebrow">
+                    Ride passengers
+                </p>
+
+                <h1 class="passengers-route">
+                    {{ trip.start_location }}
+
+                    <span class="passengers-route-arrow">
+                        →
+                    </span>
+
+                    {{ trip.end_location }}
+                </h1>
+
+                <p class="passengers-date">
+                    {% if trip.date %}
+                        {{ trip.date|date:"F d, Y" }}
+                    {% else %}
+                        Date not specified
+                    {% endif %}
+
+                    ·
+
+                    {% if trip.time %}
+                        {{ trip.time|time:"g:i A" }}
+                    {% else %}
+                        Time not specified
+                    {% endif %}
+                </p>
+            </div>
+
+            <div class="passengers-price-box">
+                <span class="passengers-price-label">
+                    Price per seat
+                </span>
+
+                <span class="passengers-price">
+                    ${{ trip.price_per_seat|floatformat:2 }}
+                </span>
+            </div>
+
+        </section>
+
+        <section class="passengers-stats">
+
+            <article class="passenger-stat-card accent">
+                <span class="passenger-stat-icon">👥</span>
+
+                <div>
+                    <p class="passenger-stat-label">
+                        Passengers
+                    </p>
+
+                    <p class="passenger-stat-value">
+                        {{ total_passengers }}
+                    </p>
+                </div>
+            </article>
+
+            <article class="passenger-stat-card">
+                <span class="passenger-stat-icon">💺</span>
+
+                <div>
+                    <p class="passenger-stat-label">
+                        Seats reserved
+                    </p>
+
+                    <p class="passenger-stat-value">
+                        {{ total_reserved_seats }}
+                    </p>
+                </div>
+            </article>
+
+            <article class="passenger-stat-card">
+                <span class="passenger-stat-icon">💳</span>
+
+                <div>
+                    <p class="passenger-stat-label">
+                        Gross value
+                    </p>
+
+                    <p class="passenger-stat-value">
+                        ${{ gross_earnings|floatformat:2 }}
+                    </p>
+                </div>
+            </article>
+
+            <article class="passenger-stat-card dark">
+                <span class="passenger-stat-icon">💵</span>
+
+                <div>
+                    <p class="passenger-stat-label">
+                        Driver earnings
+                    </p>
+
+                    <p class="passenger-stat-value">
+                        ${{ driver_earnings|floatformat:2 }}
+                    </p>
+                </div>
+            </article>
+
+        </section>
+
+        <section class="passengers-section">
+
+            <div class="passengers-section-header">
+                <div>
+                    <h2 class="passengers-section-title">
+                        Passenger list
+                    </h2>
+
+                    <p class="passengers-section-text">
+                        {{ total_passengers }}
+                        passenger{{ total_passengers|pluralize }}
+                        booked on this ride.
+                    </p>
+                </div>
+            </div>
+
+            {% if bookings %}
+
+                <div class="passengers-list">
+
+                    {% for booking in bookings %}
+
+                        <article class="passenger-card">
+
+                            <div class="passenger-avatar">
+                                {{ booking.passenger.username|slice:":1"|upper }}
+                            </div>
+
+                            <div>
+                                <h3 class="passenger-name">
+                                    {% if booking.passenger.first_name or booking.passenger.last_name %}
+                                        {{ booking.passenger.first_name }}
+                                        {{ booking.passenger.last_name }}
+                                    {% else %}
+                                        {{ booking.passenger.username }}
+                                    {% endif %}
+                                </h3>
+
+                                <p class="passenger-email">
+                                    {{ booking.passenger.email|default:"No email provided" }}
+                                </p>
+
+                                <div class="passenger-meta">
+
+                                    <span class="passenger-chip">
+                                        @{{ booking.passenger.username }}
+                                    </span>
+
+                                    <span class="passenger-chip">
+                                        {{ booking.seats_booked }}
+                                        seat{{ booking.seats_booked|pluralize }}
+                                    </span>
+
+                                </div>
+                            </div>
+
+                            <div class="passenger-value">
+
+                                <span class="passenger-value-label">
+                                    Booking value
+                                </span>
+
+                                <span class="passenger-value-amount">
+                                    {% widthratio booking.seats_booked 1 trip.price_per_seat as booking_value %}
+                                    ${{ booking_value }}
+                                </span>
+
+                            </div>
+
+                        </article>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="passengers-empty">
+
+                    <div class="passengers-empty-icon">
+                        👥
+                    </div>
+
+                    <h2>No passengers yet</h2>
+
+                    <p>
+                        Nobody has reserved a seat on this ride yet. When a
+                        passenger books, their details will appear here.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </section>
+
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,930 @@
+{% extends "admin_portal/base.html" %}
+
+{% block title %}
+    Dashboard | RideShare Command Center
+{% endblock %}
+
+{% block page_title %}
+    Dashboard
+{% endblock %}
+
+{% block extra_css %}
+
+<style>
+    .welcome-banner {
+        margin-bottom: 26px;
+        padding: 28px;
+        border-radius: 20px;
+        background:
+            linear-gradient(
+                135deg,
+                #1d4ed8,
+                #2563eb,
+                #0ea5e9
+            );
+        color: white;
+        box-shadow:
+            0 18px 40px rgba(37, 99, 235, .22);
+    }
+
+    .welcome-banner h1 {
+        font-size: 30px;
+        line-height: 1.25;
+    }
+
+    .welcome-banner p {
+        max-width: 700px;
+        margin-top: 10px;
+        color: rgba(255, 255, 255, .85);
+        line-height: 1.6;
+    }
+
+    .statistics-grid {
+        display: grid;
+        grid-template-columns:
+            repeat(4, minmax(0, 1fr));
+        gap: 18px;
+        margin-bottom: 26px;
+    }
+
+    .stat-card {
+        position: relative;
+        overflow: hidden;
+        padding: 22px;
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow:
+            0 8px 25px rgba(15, 23, 42, .05);
+    }
+
+    .stat-card::after {
+        content: "";
+        position: absolute;
+        right: -25px;
+        bottom: -25px;
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        background: rgba(37, 99, 235, .07);
+    }
+
+    .stat-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+    }
+
+    .stat-icon {
+        width: 46px;
+        height: 46px;
+        display: grid;
+        place-items: center;
+        border-radius: 13px;
+        background: #eff6ff;
+        font-size: 21px;
+    }
+
+    .stat-label {
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .stat-value {
+        position: relative;
+        z-index: 1;
+        margin-top: 16px;
+        font-size: 30px;
+        font-weight: 800;
+        letter-spacing: -.5px;
+    }
+
+    .stat-description {
+        position: relative;
+        z-index: 1;
+        margin-top: 7px;
+        color: var(--muted);
+        font-size: 12px;
+    }
+
+    .financial-grid {
+        display: grid;
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+        gap: 18px;
+        margin-bottom: 26px;
+    }
+
+    .financial-card {
+        padding: 22px;
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow:
+            0 8px 25px rgba(15, 23, 42, .05);
+    }
+
+    .financial-card p {
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .financial-card h2 {
+        margin-top: 12px;
+        font-size: 28px;
+    }
+
+    .financial-card small {
+        display: block;
+        margin-top: 7px;
+        color: var(--muted);
+    }
+
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns:
+            minmax(0, 1.5fr)
+            minmax(300px, .8fr);
+        gap: 22px;
+        margin-bottom: 26px;
+    }
+
+    .panel + .panel {
+        margin-top: 22px;
+    }
+
+    .panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+    }
+
+    .panel-header p {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 13px;
+    }
+
+    .view-link {
+        color: var(--primary);
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    .dashboard-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .dashboard-table th,
+    .dashboard-table td {
+        padding: 14px 18px;
+        border-bottom: 1px solid var(--border);
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    .dashboard-table th {
+        background: #f8fafc;
+        color: var(--muted);
+        font-size: 11px;
+        letter-spacing: .7px;
+        text-transform: uppercase;
+    }
+
+    .dashboard-table td {
+        font-size: 13px;
+    }
+
+    .dashboard-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .dashboard-table tbody tr:hover {
+        background: #f8fafc;
+    }
+
+    .user-cell {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+    }
+
+    .avatar {
+        width: 36px;
+        height: 36px;
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+        border-radius: 50%;
+        background: #dbeafe;
+        color: #1d4ed8;
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+
+    .user-details strong {
+        display: block;
+        font-size: 13px;
+    }
+
+    .user-details span {
+        display: block;
+        max-width: 180px;
+        margin-top: 3px;
+        overflow: hidden;
+        color: var(--muted);
+        font-size: 11px;
+        text-overflow: ellipsis;
+    }
+
+    .route {
+        font-weight: 700;
+    }
+
+    .route-arrow {
+        margin: 0 5px;
+        color: var(--primary);
+    }
+
+    .ranking-list {
+        list-style: none;
+    }
+
+    .ranking-item {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 15px 0;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .ranking-item:first-child {
+        padding-top: 0;
+    }
+
+    .ranking-item:last-child {
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+
+    .ranking-number {
+        width: 30px;
+        height: 30px;
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+        border-radius: 9px;
+        background: #eff6ff;
+        color: var(--primary);
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .ranking-content {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .ranking-content strong {
+        display: block;
+        overflow: hidden;
+        font-size: 13px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .ranking-content span {
+        display: block;
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 11px;
+    }
+
+    .rating {
+        color: #d97706;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .badge {
+        display: inline-flex;
+        padding: 6px 9px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .badge-success {
+        background: #d1fae5;
+        color: #047857;
+    }
+
+    .badge-blue {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    .badge-neutral {
+        background: #e2e8f0;
+        color: #475569;
+    }
+
+    .empty-message {
+        padding: 30px;
+        color: var(--muted);
+        text-align: center;
+    }
+
+    @media (max-width: 1200px) {
+        .statistics-grid {
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+        }
+
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 700px) {
+        .statistics-grid,
+        .financial-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .welcome-banner {
+            padding: 22px;
+        }
+
+        .welcome-banner h1 {
+            font-size: 25px;
+        }
+    }
+</style>
+
+{% endblock %}
+
+{% block portal_content %}
+
+<section class="welcome-banner">
+    <h1>
+        Welcome back, {{ request.user.first_name|default:request.user.username }}
+    </h1>
+
+    <p>
+        Here is an overview of the RideShare platform.
+        Monitor users, routes, reservations, ratings and financial activity
+        from one secure command center.
+    </p>
+</section>
+
+
+<section class="statistics-grid">
+
+    <article class="stat-card">
+        <div class="stat-card-header">
+            <span class="stat-label">Total users</span>
+            <span class="stat-icon">👥</span>
+        </div>
+
+        <div class="stat-value">
+            {{ total_users }}
+        </div>
+
+        <div class="stat-description">
+            Registered platform accounts
+        </div>
+    </article>
+
+
+    <article class="stat-card">
+        <div class="stat-card-header">
+            <span class="stat-label">Total trips</span>
+            <span class="stat-icon">🚗</span>
+        </div>
+
+        <div class="stat-value">
+            {{ total_trips }}
+        </div>
+
+        <div class="stat-description">
+            Rides offered by drivers
+        </div>
+    </article>
+
+
+    <article class="stat-card">
+        <div class="stat-card-header">
+            <span class="stat-label">Bookings</span>
+            <span class="stat-icon">🎫</span>
+        </div>
+
+        <div class="stat-value">
+            {{ total_bookings }}
+        </div>
+
+        <div class="stat-description">
+            Passenger reservations
+        </div>
+    </article>
+
+
+    <article class="stat-card">
+        <div class="stat-card-header">
+            <span class="stat-label">Seats reserved</span>
+            <span class="stat-icon">💺</span>
+        </div>
+
+        <div class="stat-value">
+            {{ total_seats }}
+        </div>
+
+        <div class="stat-description">
+            Total seats booked
+        </div>
+    </article>
+
+
+    <article class="stat-card">
+        <div class="stat-card-header">
+            <span class="stat-label">Reviews</span>
+            <span class="stat-icon">💬</span>
+        </div>
+
+        <div class="stat-value">
+            {{ total_reviews }}
+        </div>
+
+        <div class="stat-description">
+            Passenger feedback entries
+        </div>
+    </article>
+
+
+    <article class="stat-card">
+        <div class="stat-card-header">
+            <span class="stat-label">Average rating</span>
+            <span class="stat-icon">⭐</span>
+        </div>
+
+        <div class="stat-value">
+            {{ average_rating|floatformat:1 }}
+        </div>
+
+        <div class="stat-description">
+            Average out of five stars
+        </div>
+    </article>
+
+</section>
+
+
+<section class="financial-grid">
+
+    <article class="financial-card">
+        <p>Gross booking value</p>
+
+        <h2>
+            ${{ gross_revenue|floatformat:2 }}
+        </h2>
+
+        <small>
+            Total value of all reserved seats
+        </small>
+    </article>
+
+
+    <article class="financial-card">
+        <p>Platform commission</p>
+
+        <h2>
+            ${{ platform_fee|floatformat:2 }}
+        </h2>
+
+        <small>
+            Calculated at a 10% commission rate
+        </small>
+    </article>
+
+
+    <article class="financial-card">
+        <p>Driver earnings</p>
+
+        <h2>
+            ${{ driver_income|floatformat:2 }}
+        </h2>
+
+        <small>
+            Estimated payout after commission
+        </small>
+    </article>
+
+</section>
+
+
+<section class="dashboard-grid">
+
+    <div>
+
+        <article class="panel">
+
+            <div class="panel-header">
+                <div>
+                    <h3>Recent bookings</h3>
+                    <p>Latest passenger reservations</p>
+                </div>
+
+                <a
+                    class="view-link"
+                    href="{% url 'admin_portal:bookings' %}"
+                >
+                    View all
+                </a>
+            </div>
+
+            {% if recent_bookings %}
+
+                <div class="table-wrapper">
+
+                    <table class="dashboard-table">
+
+                        <thead>
+                            <tr>
+                                <th>Passenger</th>
+                                <th>Route</th>
+                                <th>Driver</th>
+                                <th>Seats</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for booking in recent_bookings %}
+
+                                <tr>
+                                    <td>
+                                        <div class="user-cell">
+
+                                            <div class="avatar">
+                                                {{ booking.passenger.username|slice:":1" }}
+                                            </div>
+
+                                            <div class="user-details">
+                                                <strong>
+                                                    {{ booking.passenger.username }}
+                                                </strong>
+
+                                                <span>
+                                                    {{ booking.passenger.email|default:"No email" }}
+                                                </span>
+                                            </div>
+
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <span class="route">
+                                            {{ booking.trip.start_location }}
+
+                                            <span class="route-arrow">
+                                                →
+                                            </span>
+
+                                            {{ booking.trip.end_location }}
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        {{ booking.trip.driver.username }}
+                                    </td>
+
+                                    <td>
+                                        <span class="badge badge-blue">
+                                            {{ booking.seats_booked }}
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        ${{ booking.total_price|floatformat:2 }}
+                                    </td>
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="empty-message">
+                    No bookings are currently available.
+                </div>
+
+            {% endif %}
+
+        </article>
+
+
+        <article class="panel">
+
+            <div class="panel-header">
+                <div>
+                    <h3>Recent trips</h3>
+                    <p>Newest routes published by drivers</p>
+                </div>
+
+                <a
+                    class="view-link"
+                    href="{% url 'admin_portal:trips' %}"
+                >
+                    View all
+                </a>
+            </div>
+
+            {% if recent_trips %}
+
+                <div class="table-wrapper">
+
+                    <table class="dashboard-table">
+
+                        <thead>
+                            <tr>
+                                <th>Driver</th>
+                                <th>Route</th>
+                                <th>Date</th>
+                                <th>Seats</th>
+                                <th>Price</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for trip in recent_trips %}
+
+                                <tr>
+                                    <td>
+                                        {{ trip.driver.username }}
+                                    </td>
+
+                                    <td>
+                                        <span class="route">
+                                            {{ trip.start_location }}
+
+                                            <span class="route-arrow">
+                                                →
+                                            </span>
+
+                                            {{ trip.end_location }}
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        {{ trip.date|default:"Not set" }}
+                                    </td>
+
+                                    <td>
+                                        <span class="badge badge-success">
+                                            {{ trip.seats_available }} available
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        ${{ trip.price_per_seat|floatformat:2 }}
+                                    </td>
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="empty-message">
+                    No trips are currently available.
+                </div>
+
+            {% endif %}
+
+        </article>
+
+    </div>
+
+
+    <aside>
+
+        <article class="panel">
+
+            <div class="panel-header">
+                <div>
+                    <h3>Top drivers</h3>
+                    <p>Based on ratings and activity</p>
+                </div>
+            </div>
+
+            <div class="panel-body">
+
+                {% if top_drivers %}
+
+                    <ol class="ranking-list">
+
+                        {% for driver in top_drivers %}
+
+                            <li class="ranking-item">
+
+                                <span class="ranking-number">
+                                    {{ forloop.counter }}
+                                </span>
+
+                                <div class="avatar">
+                                    {{ driver.username|slice:":1" }}
+                                </div>
+
+                                <div class="ranking-content">
+                                    <strong>
+                                        {{ driver.username }}
+                                    </strong>
+
+                                    <span>
+                                        {{ driver.trips_offered }}
+                                        trip{{ driver.trips_offered|pluralize }}
+                                        ·
+                                        {{ driver.passengers_served }}
+                                        passenger{{ driver.passengers_served|pluralize }}
+                                    </span>
+                                </div>
+
+                                <span class="rating">
+                                    ★
+                                    {{ driver.driver_rating|default:0|floatformat:1 }}
+                                </span>
+
+                            </li>
+
+                        {% endfor %}
+
+                    </ol>
+
+                {% else %}
+
+                    <div class="empty-message">
+                        No driver information yet.
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </article>
+
+
+        <article class="panel">
+
+            <div class="panel-header">
+                <div>
+                    <h3>Popular routes</h3>
+                    <p>Routes with the most activity</p>
+                </div>
+            </div>
+
+            <div class="panel-body">
+
+                {% if popular_routes %}
+
+                    <ol class="ranking-list">
+
+                        {% for route in popular_routes %}
+
+                            <li class="ranking-item">
+
+                                <span class="ranking-number">
+                                    {{ forloop.counter }}
+                                </span>
+
+                                <div class="ranking-content">
+                                    <strong>
+                                        {{ route.start_location }}
+                                        →
+                                        {{ route.end_location }}
+                                    </strong>
+
+                                    <span>
+                                        {{ route.trip_count }}
+                                        offered trip{{ route.trip_count|pluralize }}
+                                    </span>
+                                </div>
+
+                                <span class="badge badge-neutral">
+                                    {{ route.booking_count }}
+                                    booking{{ route.booking_count|pluralize }}
+                                </span>
+
+                            </li>
+
+                        {% endfor %}
+
+                    </ol>
+
+                {% else %}
+
+                    <div class="empty-message">
+                        No route information yet.
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </article>
+
+
+        <article class="panel">
+
+            <div class="panel-header">
+                <div>
+                    <h3>Recently joined</h3>
+                    <p>Newest platform users</p>
+                </div>
+
+                <a
+                    class="view-link"
+                    href="{% url 'admin_portal:users' %}"
+                >
+                    View all
+                </a>
+            </div>
+
+            <div class="panel-body">
+
+                {% if recent_users %}
+
+                    <ol class="ranking-list">
+
+                        {% for user in recent_users %}
+
+                            <li class="ranking-item">
+
+                                <div class="avatar">
+                                    {{ user.username|slice:":1" }}
+                                </div>
+
+                                <div class="ranking-content">
+                                    <strong>
+                                        {{ user.username }}
+                                    </strong>
+
+                                    <span>
+                                        Joined
+                                        {{ user.date_joined|date:"M d, Y" }}
+                                    </span>
+                                </div>
+
+                                {% if user.is_staff %}
+                                    <span class="badge badge-blue">
+                                        Staff
+                                    </span>
+                                {% else %}
+                                    <span class="badge badge-neutral">
+                                        User
+                                    </span>
+                                {% endif %}
+
+                            </li>
+
+                        {% endfor %}
+
+                    </ol>
+
+                {% else %}
+
+                    <div class="empty-message">
+                        No user information available.
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </article>
+
+    </aside>
+
+</section>
+
+{% endblock %}

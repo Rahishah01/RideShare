@@ -1,0 +1,1092 @@
+{% extends "admin_portal/base.html" %}
+
+{% block title %}
+    Users | RideShare Command Center
+{% endblock %}
+
+{% block page_title %}
+    User Management
+{% endblock %}
+
+{% block extra_css %}
+
+<style>
+    .users-header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 24px;
+    }
+
+    .users-header h1 {
+        font-size: 28px;
+    }
+
+    .users-header p {
+        margin-top: 7px;
+        color: var(--muted);
+        line-height: 1.5;
+    }
+
+    .summary-grid {
+        display: grid;
+        grid-template-columns:
+            repeat(4, minmax(0, 1fr));
+        gap: 18px;
+        margin-bottom: 24px;
+    }
+
+    .summary-card {
+        padding: 20px;
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow:
+            0 8px 25px rgba(15, 23, 42, .05);
+    }
+
+    .summary-card-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .summary-card-label {
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .summary-icon {
+        width: 42px;
+        height: 42px;
+        display: grid;
+        place-items: center;
+        border-radius: 12px;
+        background: #eff6ff;
+        font-size: 19px;
+    }
+
+    .summary-value {
+        margin-top: 14px;
+        font-size: 28px;
+        font-weight: 800;
+    }
+
+    .filter-panel {
+        margin-bottom: 24px;
+        padding: 20px;
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow:
+            0 8px 25px rgba(15, 23, 42, .05);
+    }
+
+    .filter-form {
+        display: grid;
+        grid-template-columns:
+            minmax(240px, 2fr)
+            minmax(150px, .8fr)
+            minmax(150px, .8fr)
+            minmax(170px, .9fr)
+            auto;
+        gap: 13px;
+        align-items: end;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 7px;
+        color: #334155;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .form-control {
+        width: 100%;
+        height: 44px;
+        padding: 0 13px;
+        border: 1px solid #cbd5e1;
+        border-radius: 10px;
+        background: white;
+        color: var(--text);
+        font: inherit;
+        font-size: 13px;
+        outline: none;
+        transition:
+            border-color .2s ease,
+            box-shadow .2s ease;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary);
+        box-shadow:
+            0 0 0 3px rgba(37, 99, 235, .12);
+    }
+
+    .filter-actions {
+        display: flex;
+        gap: 9px;
+    }
+
+    .button {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 16px;
+        border: none;
+        border-radius: 10px;
+        font: inherit;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .button-primary {
+        background: var(--primary);
+        color: white;
+    }
+
+    .button-primary:hover {
+        background: #1d4ed8;
+    }
+
+    .button-secondary {
+        border: 1px solid var(--border);
+        background: white;
+        color: #475569;
+    }
+
+    .button-secondary:hover {
+        background: #f8fafc;
+    }
+
+    .users-panel {
+        overflow: hidden;
+    }
+
+    .users-panel-header {
+        padding: 20px 22px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+    }
+
+    .users-panel-header h3 {
+        font-size: 17px;
+    }
+
+    .users-panel-header p {
+        margin-top: 5px;
+        color: var(--muted);
+        font-size: 12px;
+    }
+
+    .result-count {
+        padding: 7px 11px;
+        border-radius: 999px;
+        background: #eff6ff;
+        color: #1d4ed8;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    .users-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .users-table th,
+    .users-table td {
+        padding: 16px 18px;
+        border-bottom: 1px solid var(--border);
+        text-align: left;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+    .users-table th {
+        background: #f8fafc;
+        color: var(--muted);
+        font-size: 11px;
+        letter-spacing: .7px;
+        text-transform: uppercase;
+    }
+
+    .users-table td {
+        font-size: 13px;
+    }
+
+    .users-table tbody tr {
+        transition: background .15s ease;
+    }
+
+    .users-table tbody tr:hover {
+        background: #f8fafc;
+    }
+
+    .users-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .user-information {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .user-avatar {
+        width: 42px;
+        height: 42px;
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+        border-radius: 13px;
+        background:
+            linear-gradient(
+                135deg,
+                #dbeafe,
+                #bfdbfe
+            );
+        color: #1d4ed8;
+        font-size: 15px;
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+
+    .user-name {
+        max-width: 220px;
+    }
+
+    .user-name strong {
+        display: block;
+        overflow: hidden;
+        color: #0f172a;
+        font-size: 13px;
+        text-overflow: ellipsis;
+    }
+
+    .user-name span {
+        display: block;
+        max-width: 210px;
+        margin-top: 4px;
+        overflow: hidden;
+        color: var(--muted);
+        font-size: 11px;
+        text-overflow: ellipsis;
+    }
+
+    .role-badges {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 9px;
+        border-radius: 999px;
+        font-size: 10px;
+        font-weight: 800;
+    }
+
+    .badge-superuser {
+        background: #ede9fe;
+        color: #6d28d9;
+    }
+
+    .badge-staff {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    .badge-driver {
+        background: #fef3c7;
+        color: #b45309;
+    }
+
+    .badge-passenger {
+        background: #e0f2fe;
+        color: #0369a1;
+    }
+
+    .badge-member {
+        background: #e2e8f0;
+        color: #475569;
+    }
+
+    .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .status::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+    }
+
+    .status-active {
+        color: #047857;
+    }
+
+    .status-active::before {
+        background: #10b981;
+        box-shadow:
+            0 0 0 3px rgba(16, 185, 129, .13);
+    }
+
+    .status-inactive {
+        color: #b91c1c;
+    }
+
+    .status-inactive::before {
+        background: #ef4444;
+        box-shadow:
+            0 0 0 3px rgba(239, 68, 68, .13);
+    }
+
+    .metric {
+        font-weight: 800;
+    }
+
+    .metric small {
+        margin-left: 3px;
+        color: var(--muted);
+        font-weight: 500;
+    }
+
+    .rating {
+        color: #d97706;
+        font-weight: 800;
+    }
+
+    .joined-date {
+        color: #475569;
+    }
+
+    .joined-date small {
+        display: block;
+        margin-top: 4px;
+        color: var(--muted);
+    }
+
+    .action-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 11px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        background: white;
+        color: #334155;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .action-button:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .empty-state {
+        padding: 60px 20px;
+        text-align: center;
+    }
+
+    .empty-state-icon {
+        width: 64px;
+        height: 64px;
+        display: grid;
+        place-items: center;
+        margin: 0 auto 16px;
+        border-radius: 20px;
+        background: #eff6ff;
+        font-size: 28px;
+    }
+
+    .empty-state h3 {
+        font-size: 18px;
+    }
+
+    .empty-state p {
+        max-width: 420px;
+        margin: 8px auto 0;
+        color: var(--muted);
+        line-height: 1.6;
+    }
+
+    .pagination {
+        padding: 18px 22px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+    }
+
+    .pagination-summary {
+        color: var(--muted);
+        font-size: 12px;
+    }
+
+    .pagination-links {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+    }
+
+    .page-link {
+        min-width: 36px;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 10px;
+        border: 1px solid var(--border);
+        border-radius: 9px;
+        background: white;
+        color: #475569;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .page-link:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .page-link.active {
+        border-color: var(--primary);
+        background: var(--primary);
+        color: white;
+    }
+
+    @media (max-width: 1200px) {
+        .summary-grid {
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+        }
+
+        .filter-form {
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+        }
+
+        .filter-actions {
+            grid-column: span 2;
+        }
+    }
+
+    @media (max-width: 700px) {
+        .users-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .summary-grid,
+        .filter-form {
+            grid-template-columns: 1fr;
+        }
+
+        .filter-actions {
+            grid-column: auto;
+        }
+
+        .filter-actions .button {
+            flex: 1;
+        }
+
+        .pagination {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+    }
+</style>
+
+{% endblock %}
+
+{% block portal_content %}
+
+<div class="users-header">
+    <div>
+        <h1>User Management</h1>
+
+        <p>
+            Search accounts, review platform activity and monitor
+            drivers, passengers and administrators.
+        </p>
+    </div>
+</div>
+
+
+<section class="summary-grid">
+
+    <article class="summary-card">
+        <div class="summary-card-top">
+            <span class="summary-card-label">
+                Total users
+            </span>
+
+            <span class="summary-icon">
+                👥
+            </span>
+        </div>
+
+        <div class="summary-value">
+            {{ total_users }}
+        </div>
+    </article>
+
+
+    <article class="summary-card">
+        <div class="summary-card-top">
+            <span class="summary-card-label">
+                Active accounts
+            </span>
+
+            <span class="summary-icon">
+                ✓
+            </span>
+        </div>
+
+        <div class="summary-value">
+            {{ active_users }}
+        </div>
+    </article>
+
+
+    <article class="summary-card">
+        <div class="summary-card-top">
+            <span class="summary-card-label">
+                Drivers
+            </span>
+
+            <span class="summary-icon">
+                🚗
+            </span>
+        </div>
+
+        <div class="summary-value">
+            {{ driver_users }}
+        </div>
+    </article>
+
+
+    <article class="summary-card">
+        <div class="summary-card-top">
+            <span class="summary-card-label">
+                Staff members
+            </span>
+
+            <span class="summary-icon">
+                🛡
+            </span>
+        </div>
+
+        <div class="summary-value">
+            {{ staff_users }}
+        </div>
+    </article>
+
+</section>
+
+
+<section class="filter-panel">
+
+    <form
+        method="get"
+        class="filter-form"
+    >
+
+        <div class="form-group">
+            <label for="user-search">
+                Search users
+            </label>
+
+            <input
+                id="user-search"
+                class="form-control"
+                type="search"
+                name="q"
+                value="{{ search_query }}"
+                placeholder="Username, name or email address"
+            >
+        </div>
+
+
+        <div class="form-group">
+            <label for="role-filter">
+                Role
+            </label>
+
+            <select
+                id="role-filter"
+                class="form-control"
+                name="role"
+            >
+                <option
+                    value="all"
+                    {% if role_filter == "all" %}selected{% endif %}
+                >
+                    All roles
+                </option>
+
+                <option
+                    value="drivers"
+                    {% if role_filter == "drivers" %}selected{% endif %}
+                >
+                    Drivers
+                </option>
+
+                <option
+                    value="passengers"
+                    {% if role_filter == "passengers" %}selected{% endif %}
+                >
+                    Passengers
+                </option>
+
+                <option
+                    value="regular"
+                    {% if role_filter == "regular" %}selected{% endif %}
+                >
+                    Regular users
+                </option>
+
+                <option
+                    value="staff"
+                    {% if role_filter == "staff" %}selected{% endif %}
+                >
+                    Staff
+                </option>
+
+                <option
+                    value="superuser"
+                    {% if role_filter == "superuser" %}selected{% endif %}
+                >
+                    Superusers
+                </option>
+            </select>
+        </div>
+
+
+        <div class="form-group">
+            <label for="status-filter">
+                Status
+            </label>
+
+            <select
+                id="status-filter"
+                class="form-control"
+                name="status"
+            >
+                <option
+                    value="all"
+                    {% if status_filter == "all" %}selected{% endif %}
+                >
+                    All statuses
+                </option>
+
+                <option
+                    value="active"
+                    {% if status_filter == "active" %}selected{% endif %}
+                >
+                    Active
+                </option>
+
+                <option
+                    value="inactive"
+                    {% if status_filter == "inactive" %}selected{% endif %}
+                >
+                    Inactive
+                </option>
+            </select>
+        </div>
+
+
+        <div class="form-group">
+            <label for="sort-filter">
+                Sort by
+            </label>
+
+            <select
+                id="sort-filter"
+                class="form-control"
+                name="sort"
+            >
+                <option
+                    value="newest"
+                    {% if sort_option == "newest" %}selected{% endif %}
+                >
+                    Newest first
+                </option>
+
+                <option
+                    value="oldest"
+                    {% if sort_option == "oldest" %}selected{% endif %}
+                >
+                    Oldest first
+                </option>
+
+                <option
+                    value="username"
+                    {% if sort_option == "username" %}selected{% endif %}
+                >
+                    Username A–Z
+                </option>
+
+                <option
+                    value="most_trips"
+                    {% if sort_option == "most_trips" %}selected{% endif %}
+                >
+                    Most trips
+                </option>
+
+                <option
+                    value="most_bookings"
+                    {% if sort_option == "most_bookings" %}selected{% endif %}
+                >
+                    Most bookings
+                </option>
+
+                <option
+                    value="highest_rated"
+                    {% if sort_option == "highest_rated" %}selected{% endif %}
+                >
+                    Highest rated
+                </option>
+            </select>
+        </div>
+
+
+        <div class="filter-actions">
+            <button
+                class="button button-primary"
+                type="submit"
+            >
+                Apply
+            </button>
+
+            <a
+                class="button button-secondary"
+                href="{% url 'admin_portal:users' %}"
+            >
+                Reset
+            </a>
+        </div>
+
+    </form>
+
+</section>
+
+
+<section class="panel users-panel">
+
+    <div class="users-panel-header">
+        <div>
+            <h3>Platform accounts</h3>
+
+            <p>
+                Users matching the selected search and filters
+            </p>
+        </div>
+
+        <span class="result-count">
+            {{ users_page.paginator.count }}
+            result{{ users_page.paginator.count|pluralize }}
+        </span>
+    </div>
+
+
+    {% if users_page %}
+
+        <div class="table-wrapper">
+
+            <table class="users-table">
+
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Trips</th>
+                        <th>Bookings</th>
+                        <th>Seats</th>
+                        <th>Rating</th>
+                        <th>Joined</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for platform_user in users_page %}
+
+                        <tr>
+
+                            <td>
+                                <div class="user-information">
+
+                                    <div class="user-avatar">
+                                        {{ platform_user.username|slice:":1" }}
+                                    </div>
+
+                                    <div class="user-name">
+                                        <strong>
+                                            {% if platform_user.get_full_name %}
+                                                {{ platform_user.get_full_name }}
+                                            {% else %}
+                                                {{ platform_user.username }}
+                                            {% endif %}
+                                        </strong>
+
+                                        <span>
+                                            @{{ platform_user.username }}
+                                            ·
+                                            {{ platform_user.email|default:"No email" }}
+                                        </span>
+                                    </div>
+
+                                </div>
+                            </td>
+
+
+                            <td>
+                                <div class="role-badges">
+
+                                    {% if platform_user.is_superuser %}
+
+                                        <span class="badge badge-superuser">
+                                            Superuser
+                                        </span>
+
+                                    {% elif platform_user.is_staff %}
+
+                                        <span class="badge badge-staff">
+                                            Staff
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge badge-member">
+                                            Member
+                                        </span>
+
+                                    {% endif %}
+
+
+                                    {% if platform_user.trips_offered > 0 %}
+
+                                        <span class="badge badge-driver">
+                                            Driver
+                                        </span>
+
+                                    {% endif %}
+
+
+                                    {% if platform_user.bookings_made > 0 %}
+
+                                        <span class="badge badge-passenger">
+                                            Passenger
+                                        </span>
+
+                                    {% endif %}
+
+                                </div>
+                            </td>
+
+
+                            <td>
+                                {% if platform_user.is_active %}
+
+                                    <span class="status status-active">
+                                        Active
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="status status-inactive">
+                                        Inactive
+                                    </span>
+
+                                {% endif %}
+                            </td>
+
+
+                            <td>
+                                <span class="metric">
+                                    {{ platform_user.trips_offered }}
+                                </span>
+                            </td>
+
+
+                            <td>
+                                <span class="metric">
+                                    {{ platform_user.bookings_made }}
+                                </span>
+                            </td>
+
+
+                            <td>
+                                <span class="metric">
+                                    {{ platform_user.seats_reserved }}
+                                </span>
+                            </td>
+
+
+                            <td>
+                                {% if platform_user.average_driver_rating > 0 %}
+
+                                    <span class="rating">
+                                        ★
+                                        {{ platform_user.average_driver_rating|floatformat:1 }}
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge badge-member">
+                                        No rating
+                                    </span>
+
+                                {% endif %}
+                            </td>
+
+
+                            <td>
+                                <div class="joined-date">
+                                    {{ platform_user.date_joined|date:"M d, Y" }}
+
+                                    <small>
+                                        {{ platform_user.date_joined|timesince }}
+                                        ago
+                                    </small>
+                                </div>
+                            </td>
+
+
+                            <td>
+                                <a
+                                    class="action-button"
+                                    href="{% url 'admin_portal:user_detail' platform_user.pk %}"
+                                >
+                                    View Profile
+                                </a>
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% if users_page.paginator.num_pages > 1 %}
+
+            <div class="pagination">
+
+                <div class="pagination-summary">
+                    Showing
+                    {{ users_page.start_index }}
+                    to
+                    {{ users_page.end_index }}
+                    of
+                    {{ users_page.paginator.count }}
+                    users
+                </div>
+
+
+                <div class="pagination-links">
+
+                    {% if users_page.has_previous %}
+
+                        <a
+                            class="page-link"
+                            href="?q={{ search_query|urlencode }}&role={{ role_filter }}&status={{ status_filter }}&sort={{ sort_option }}&page={{ users_page.previous_page_number }}"
+                        >
+                            Previous
+                        </a>
+
+                    {% endif %}
+
+
+                    {% for page_number in users_page.paginator.page_range %}
+
+                        {% if page_number == users_page.number %}
+
+                            <span class="page-link active">
+                                {{ page_number }}
+                            </span>
+
+                        {% elif page_number >= users_page.number|add:"-2" and page_number <= users_page.number|add:"2" %}
+
+                            <a
+                                class="page-link"
+                                href="?q={{ search_query|urlencode }}&role={{ role_filter }}&status={{ status_filter }}&sort={{ sort_option }}&page={{ page_number }}"
+                            >
+                                {{ page_number }}
+                            </a>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+
+                    {% if users_page.has_next %}
+
+                        <a
+                            class="page-link"
+                            href="?q={{ search_query|urlencode }}&role={{ role_filter }}&status={{ status_filter }}&sort={{ sort_option }}&page={{ users_page.next_page_number }}"
+                        >
+                            Next
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+
+    {% else %}
+
+        <div class="empty-state">
+
+            <div class="empty-state-icon">
+                👤
+            </div>
+
+            <h3>No users found</h3>
+
+            <p>
+                No platform accounts match your current search and
+                filters. Try changing or resetting the filters.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

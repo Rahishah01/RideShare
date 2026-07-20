@@ -1,0 +1,587 @@
+{% extends "base.html" %}
+
+{% block title %}Log In | RideShare{% endblock %}
+
+{% block extra_css %}
+
+/* =========================
+   Login page
+========================= */
+
+.login-page {
+    width: min(1180px, calc(100% - 40px));
+    min-height: calc(100vh - 145px);
+    margin: 38px auto 70px;
+
+    display: grid;
+    grid-template-columns: minmax(0, 0.92fr) minmax(420px, 1.08fr);
+
+    overflow: hidden;
+
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    border-radius: 32px;
+    background: #ffffff;
+    box-shadow: 0 24px 60px rgba(28, 45, 36, 0.12);
+}
+
+/* Form section */
+
+.login-form-section {
+    padding: 65px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    background: #ffffff;
+}
+
+.login-back-link {
+    width: fit-content;
+    margin-bottom: 42px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    color: var(--dark);
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 700;
+}
+
+.login-back-link:hover {
+    text-decoration: underline;
+}
+
+.login-eyebrow {
+    width: fit-content;
+    margin-bottom: 17px;
+    padding: 8px 13px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    border-radius: 999px;
+    background: rgba(173, 243, 63, 0.25);
+    color: var(--dark);
+
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.login-title {
+    margin: 0;
+
+    font-size: clamp(2.6rem, 5vw, 4.3rem);
+    line-height: 1;
+    letter-spacing: -0.055em;
+}
+
+.login-description {
+    margin: 19px 0 0;
+
+    color: var(--muted);
+    line-height: 1.7;
+}
+
+.login-description a {
+    color: var(--dark);
+    font-weight: 700;
+}
+
+/* Form */
+
+.login-form {
+    margin-top: 38px;
+}
+
+.login-field {
+    margin-bottom: 20px;
+}
+
+.login-field label {
+    display: block;
+    margin: 0 0 9px 3px;
+
+    color: #4d554f;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.065em;
+}
+
+.login-input-wrap {
+    position: relative;
+}
+
+.login-input-icon {
+    position: absolute;
+    top: 50%;
+    left: 17px;
+    transform: translateY(-50%);
+
+    color: #7c837d;
+    pointer-events: none;
+}
+
+.login-field input {
+    min-height: 55px;
+    padding: 14px 48px 14px 47px;
+
+    border: 1px solid #dbdcd6;
+    border-radius: 16px;
+    background: #fafaf8;
+
+    font-size: 0.95rem;
+}
+
+.login-field input:focus {
+    border-color: var(--dark);
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(32, 61, 49, 0.09);
+}
+
+.password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    transform: translateY(-50%);
+
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: #626962;
+
+    cursor: pointer;
+}
+
+.password-toggle:hover {
+    background: #ecece7;
+}
+
+.login-options {
+    margin: -3px 0 22px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.remember-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    color: var(--muted);
+    font-size: 0.82rem;
+}
+
+.remember-option input {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+}
+
+.forgot-password {
+    color: var(--dark);
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+.login-button {
+    width: 100%;
+    min-height: 54px;
+}
+
+.login-error {
+    margin-bottom: 20px;
+    padding: 14px 16px;
+
+    border-left: 4px solid #dc4c4c;
+    border-radius: 12px;
+    background: #fbeaea;
+    color: #8b3434;
+
+    font-size: 0.85rem;
+    line-height: 1.55;
+}
+
+.login-error ul {
+    margin: 0;
+    padding-left: 18px;
+}
+
+.login-footer-note {
+    margin-top: 24px;
+
+    color: #858b85;
+    font-size: 0.78rem;
+    line-height: 1.55;
+    text-align: center;
+}
+
+/* Right visual */
+
+.login-visual {
+    position: relative;
+    min-height: 650px;
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(23, 48, 37, 0.12),
+            rgba(23, 48, 37, 0.55)
+        ),
+        url("https://images.unsplash.com/photo-1504215680853-026ed2a45def?auto=format&fit=crop&w=1400&q=85")
+        center / cover no-repeat;
+}
+
+.login-visual::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(14, 31, 23, 0.08) 30%,
+            rgba(14, 31, 23, 0.82) 100%
+        );
+}
+
+.login-visual-content {
+    position: absolute;
+    z-index: 2;
+    left: 44px;
+    right: 44px;
+    bottom: 44px;
+
+    color: #ffffff;
+}
+
+.login-visual-badge {
+    width: fit-content;
+    margin-bottom: 18px;
+    padding: 9px 14px;
+
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.login-visual-title {
+    max-width: 540px;
+    margin: 0;
+
+    font-size: clamp(2.2rem, 4vw, 3.8rem);
+    line-height: 1.06;
+    letter-spacing: -0.045em;
+}
+
+.login-visual-description {
+    max-width: 490px;
+    margin: 17px 0 0;
+
+    color: rgba(255, 255, 255, 0.76);
+    line-height: 1.7;
+}
+
+.login-stats {
+    margin-top: 29px;
+
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.login-stat {
+    padding: 16px;
+
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 17px;
+    background: rgba(255, 255, 255, 0.11);
+    backdrop-filter: blur(12px);
+}
+
+.login-stat strong {
+    display: block;
+    margin-bottom: 4px;
+
+    color: var(--accent);
+    font-size: 1.2rem;
+}
+
+.login-stat span {
+    color: rgba(255, 255, 255, 0.74);
+    font-size: 0.76rem;
+}
+
+/* Responsive */
+
+@media (max-width: 900px) {
+    .login-page {
+        grid-template-columns: 1fr;
+    }
+
+    .login-visual {
+        min-height: 480px;
+        grid-row: 1;
+    }
+
+    .login-form-section {
+        padding: 50px;
+    }
+}
+
+@media (max-width: 600px) {
+    .login-page {
+        width: min(100% - 24px, 1180px);
+        min-height: auto;
+        margin-top: 24px;
+        border-radius: 25px;
+    }
+
+    .login-form-section {
+        padding: 36px 22px;
+    }
+
+    .login-visual {
+        min-height: 360px;
+    }
+
+    .login-visual-content {
+        left: 24px;
+        right: 24px;
+        bottom: 25px;
+    }
+
+    .login-visual-description {
+        display: none;
+    }
+
+    .login-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .login-options {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .login-back-link {
+        margin-bottom: 30px;
+    }
+}
+
+{% endblock %}
+
+{% block content %}
+
+<section class="login-page">
+
+    <!-- Login form -->
+
+    <div class="login-form-section">
+
+        <a href="{% url 'home' %}" class="login-back-link">
+            <span aria-hidden="true">←</span>
+            Back to home
+        </a>
+
+        <div class="login-eyebrow">
+            <span>👋</span>
+            Welcome back
+        </div>
+
+        <h1 class="login-title">
+            Log in to continue
+        </h1>
+
+        <p class="login-description">
+            New to RideShare?
+            <a href="{% url 'signup' %}">
+                Create your free account
+            </a>
+        </p>
+
+        <form method="post" class="login-form">
+            {% csrf_token %}
+
+            {% if form.errors %}
+                <div class="login-error">
+                    Your username or password is incorrect. Please try again.
+                </div>
+            {% endif %}
+
+            {% if next %}
+                <input type="hidden" name="next" value="{{ next }}">
+            {% endif %}
+
+            <div class="login-field">
+                <label for="id_username">
+                    Username
+                </label>
+
+                <div class="login-input-wrap">
+                    <span class="login-input-icon">●</span>
+
+                    <input
+                        id="id_username"
+                        type="text"
+                        name="username"
+                        placeholder="Enter your username"
+                        value="{{ form.username.value|default:'' }}"
+                        autocomplete="username"
+                        autofocus
+                        required
+                    >
+                </div>
+            </div>
+
+            <div class="login-field">
+                <label for="id_password">
+                    Password
+                </label>
+
+                <div class="login-input-wrap">
+                    <span class="login-input-icon">◆</span>
+
+                    <input
+                        id="id_password"
+                        type="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        id="passwordToggle"
+                        aria-label="Show password"
+                    >
+                        👁
+                    </button>
+                </div>
+            </div>
+
+            <div class="login-options">
+                <label class="remember-option">
+                    <input type="checkbox" name="remember_me">
+                    Keep me signed in
+                </label>
+
+                <span class="forgot-password">
+                    Secure login
+                </span>
+            </div>
+
+            <button type="submit" class="btn btn-dark login-button">
+                Log in
+                <span aria-hidden="true">→</span>
+            </button>
+
+        </form>
+
+        <p class="login-footer-note">
+            By logging in, you agree to use RideShare responsibly and
+            respectfully.
+        </p>
+
+    </div>
+
+    <!-- Visual section -->
+
+    <div class="login-visual">
+
+        <div class="login-visual-content">
+
+            <div class="login-visual-badge">
+                🌱 Share more. Spend less.
+            </div>
+
+            <h2 class="login-visual-title">
+                Your next journey is only a few clicks away.
+            </h2>
+
+            <p class="login-visual-description">
+                Find drivers heading your way, reserve your seat, and enjoy
+                affordable travel with the RideShare community.
+            </p>
+
+            <div class="login-stats">
+
+                <div class="login-stat">
+                    <strong>Easy</strong>
+                    <span>Search and reserve rides</span>
+                </div>
+
+                <div class="login-stat">
+                    <strong>Flexible</strong>
+                    <span>Travel around your schedule</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const passwordInput = document.getElementById("id_password");
+        const passwordToggle = document.getElementById("passwordToggle");
+
+        if (!passwordInput || !passwordToggle) {
+            return;
+        }
+
+        passwordToggle.addEventListener("click", function () {
+            const passwordIsHidden =
+                passwordInput.type === "password";
+
+            passwordInput.type =
+                passwordIsHidden ? "text" : "password";
+
+            passwordToggle.textContent =
+                passwordIsHidden ? "🙈" : "👁";
+
+            passwordToggle.setAttribute(
+                "aria-label",
+                passwordIsHidden
+                    ? "Hide password"
+                    : "Show password"
+            );
+        });
+    });
+</script>
+
+{% endblock %}
