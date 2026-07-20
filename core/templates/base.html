@@ -316,6 +316,27 @@
             color: #d13f3f;
         }
 
+        .dropdown-menu form {
+            margin: 0;
+        }
+
+        .logout-button {
+            width: 100%;
+            padding: 11px 12px;
+            border: none;
+            border-radius: 10px;
+            background: transparent;
+            color: #d13f3f;
+            text-align: left;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .logout-button:hover {
+            background: var(--surface-soft);
+        }
+
         /* General sections used by other templates */
 
         .section,
@@ -665,9 +686,13 @@
                             My Profile
                         </a>
 
-                        <a href="{% url 'logout' %}" class="logout">
-                            Logout
-                        </a>
+                        <form method="post" action="{% url 'logout' %}">
+                            {% csrf_token %}
+
+                            <button type="submit" class="logout logout-button">
+                                Logout
+                            </button>
+                        </form>
                     </div>
                 </div>
             {% else %}
