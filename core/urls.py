@@ -40,4 +40,7 @@ urlpatterns = [
     path("management/trips/", views.manage_trips, name="manage_trips"),
     path("management/bookings/", views.manage_bookings, name="manage_bookings"),
     path("management/reviews/", views.manage_reviews, name="manage_reviews"),
+
+    path("logout/", auth_views.LogoutView.as_view(), name="logout",),
+
 ]
