@@ -105,7 +105,8 @@ The application was designed with scalability, usability, and clean UI/UX in min
 
 ## ➕ Offer a Ride
 
-<img width="774" height="83" alt="Screenshot 2026-05-06 052200" src="https://github.com/user-attachments/assets/2a3d1633-f0a9-4f0a-8bc1-42763329bc51" />
+<img width="1917" height="862" alt="Screenshot 2026-07-22 224501" src="https://github.com/user-attachments/assets/d3940eae-5328-4d16-aa45-361b94339a7b" />
+
 
 
 ---
